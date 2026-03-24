@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>沐森商務定位</title>
+    <title>沐森定位測試</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #001f3f; color: white; }
@@ -13,30 +13,40 @@
 </head>
 <body>
     <div class="loader"></div>
-    <div id="status">沐森商務系統啟動中...</div>
+    <div id="status">沐森系統校準中...</div>
 
     <script>
         window.onload = function() {
-            // 直接使用您的正式 LIFF ID
             liff.init({ liffId: "2009589320-jnRQxLaF" })
                 .then(() => {
                     if (!liff.isLoggedIn()) {
                         liff.login();
                     } else {
-                        document.getElementById('status').innerText = "正在讀取 GPS...";
-                        liff.getLocation().then(res => {
-                            const msg = `【司機回報：到點】\n座標：${res.latitude.toFixed(6)}, ${res.longitude.toFixed(6)}\n時間：${new Date().toLocaleString('zh-TW')}`;
-                            liff.sendMessages([{ type: 'text', text: msg }])
-                                .then(() => {
-                                    document.getElementById('status').innerText = "回報完成！";
-                                    setTimeout(() => liff.closeWindow(), 1000);
-                                });
-                        }).catch(err => alert("請開啟定位權限並重試"));
+                        // 檢查 SDK 是否具備定位功能
+                        if (liff.getFeatures && liff.getFeatures().indexOf('location') === -1) {
+                           document.getElementById('status').innerText = "後台定位功能未開啟";
+                           return;
+                        }
+
+                        document.getElementById('status').innerText = "正在取得位置...";
+                        // 使用瀏覽器內建定位作為備援
+                        navigator.geolocation.getCurrentPosition(
+                            (pos) => {
+                                const msg = `【司機回報：到點】\n座標：${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}\n時間：${new Date().toLocaleString('zh-TW')}`;
+                                liff.sendMessages([{ type: 'text', text: msg }])
+                                    .then(() => {
+                                        document.getElementById('status').innerText = "回報成功！";
+                                        setTimeout(() => liff.closeWindow(), 1200);
+                                    });
+                            },
+                            (err) => {
+                                document.getElementById('status').innerText = "定位權限遭拒，請允許分享位置。";
+                            },
+                            { enableHighAccuracy: true }
+                        );
                     }
                 })
-                .catch(err => {
-                    document.getElementById('status').innerText = "錯誤：" + err.message;
-                });
+                .catch(err => { document.getElementById('status').innerText = "連線失敗：" + err.message; });
         };
     </script>
 </body>
