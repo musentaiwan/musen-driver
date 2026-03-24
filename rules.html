@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沐森商務司機守則</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        :root { --gold: #c5a059; --dark-bg: #121212; --card-bg: #1e1e1e; --text-gray: #b0b0b0; }
+        body { background-color: var(--dark-bg); color: #e0e0e0; font-family: "PingFang TC", "Heiti TC", sans-serif; margin: 0; padding: 25px; line-height: 1.8; }
+        .header { text-align: center; padding-bottom: 30px; }
+        .header h1 { color: var(--gold); font-size: 24px; letter-spacing: 4px; margin-bottom: 5px; font-weight: 500; }
+        .header p { color: var(--text-gray); font-size: 13px; letter-spacing: 1px; }
+        .card { background-color: var(--card-bg); border: 1px solid #333; padding: 20px; border-radius: 4px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .section-title { color: var(--gold); font-size: 17px; font-weight: bold; border-left: 2px solid var(--gold); padding-left: 12px; margin-bottom: 15px; display: block; }
+        ul { padding-left: 18px; margin: 0; color: #d0d0d0; }
+        li { margin-bottom: 12px; font-size: 15px; }
+        .highlight { color: var(--gold); font-weight: bold; }
+        .footer-btn { 
+            background: linear-gradient(135deg, #c5a059 0%, #8e6d31 100%);
+            color: #000; border: none; padding: 18px; width: 100%; 
+            font-weight: bold; font-size: 16px; border-radius: 2px;
+            margin-top: 30px; cursor: pointer; letter-spacing: 2px;
+            transition: opacity 0.3s;
+        }
+        .footer-btn:active { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>沐森商務</h1>
+    <p>司機服務守則 · 2026 OFFICIAL</p>
+</div>
+
+<div class="card">
+    <span class="section-title">一、 派遣與取消規範</span>
+    <ul>
+        <li>改派規定：須於車趟前 <span class="highlight">24 小時</span> 提出。</li>
+        <li>違約罰則：24小時內取消，將扣除該次 <span class="highlight">全額車資</span> 作為調度損失。</li>
+        <li>無故缺席：永久取消派遣資格，並負擔臨時調車之所有差額費。</li>
+    </ul>
+</div>
+
+<div class="card">
+    <span class="section-title">二、 服儀與車況規範</span>
+    <ul>
+        <li>車內清潔：無異味、無垃圾，油量及胎壓須正常。</li>
+        <li>專業形象：穿著整潔正式（建議襯衫、長褲、深色皮鞋）。</li>
+        <li><span class="highlight">嚴禁行為：</span> 服務期間嚴禁嚼檳榔、吸菸、飲酒。</li>
+    </ul>
+</div>
+
+<div class="card">
+    <span class="section-title">三、 行程服務細則</span>
+    <ul>
+        <li>提前抵達：預定時間前 <span class="highlight">10-15 分鐘</span> 抵達並點擊【到點】回報。</li>
+        <li>專業接待：主動問好、協助搬運行李、確認下一站目的地。</li>
+        <li>安全至上：嚴禁超速，行車間若需通話請務必使用藍牙耳機。</li>
+    </ul>
+</div>
+
+<div class="card">
+    <span class="section-title">四、 費用與報支說明</span>
+    <ul>
+        <li>全包原則：資費內含油資、ETC、勞務費及一般停車費。</li>
+        <li>代墊費用：僅限客人主動要求之代購，且須先 <span class="highlight">LINE 回報中心核備</span>。</li>
+        <li>嚴禁小費：禁止以任何名義向客人主動索取現金。</li>
+    </ul>
+</div>
+
+<button class="footer-btn" onclick="agree()">我已閱讀並同意遵守守則</button>
+
+<script>
+    window.onload = function() {
+        liff.init({ liffId: "2009589320-dRnKgyuB" });
+    };
+
+    function agree() {
+        liff.sendMessages([{
+            "type": "text",
+            "text": "本人已完整閱讀並同意遵守【沐森商務車隊－司機服務守則】內容。"
+        }]).then(() => {
+            liff.closeWindow();
+        }).catch(err => {
+            alert("請先授權傳送訊息權限。");
+        });
+    }
+</script>
+
+</body>
+</html>
