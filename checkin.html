@@ -1,86 +1,43 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>沐森商務 | 司機定位報到</title>
+    <title>沐森商務定位</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #001f3f; color: white; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #d4af37; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #status { font-size: 16px; letter-spacing: 1px; padding: 0 20px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="loader"></div>
-    <div id="status">系統啟動中...</div>
+    <div id="status">沐森商務系統啟動中...</div>
 
     <script>
-        const LIFF_ID = "2009589320-jnRQxLaF"; 
-        const GOOGLE_MAPS_API_KEY = "您的_GOOGLE_API_KEY"; 
-
-        async function initializeLiff() {
-            try {
-                // 確保 LIFF ID 前後沒有空白字元
-                await liff.init({ liffId: LIFF_ID.trim() });
-                
-                document.getElementById('status').innerText = "驗證身分中...";
-
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    document.getElementById('status').innerText = "正在取得精準定位...";
-                    getLocation();
-                }
-            } catch (err) {
-                document.getElementById('status').innerText = "初始化失敗: " + err.code + "\n請確認網路連線";
-                console.error("LIFF Init Error:", err);
-            }
-        }
-
-        function getLocation() {
-            liff.getLocation().then(async (res) => {
-                const lat = res.latitude;
-                const lng = res.longitude;
-                let address = "無法取得詳細地址";
-
-                if (GOOGLE_MAPS_API_KEY !== "您的_GOOGLE_API_KEY") {
-                    try {
-                        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}&language=zh-TW`);
-                        const data = await response.json();
-                        if (data.status === "OK") {
-                            address = data.results[0].formatted_address;
-                        }
-                    } catch (e) { console.error("地址換算失敗", e); }
-                }
-
-                const messageText = `【司機回報：到點】\n------------------\n📍 地址：${address}\n🌐 座標：${lat.toFixed(6)}, ${lng.toFixed(6)}\n⏰ 時間：${new Date().toLocaleString('zh-TW', {hour12: false, timeZone: 'Asia/Taipei'})}`;
-
-                // 檢查是否在 LINE App 內開啟，才能發送訊息
-                if (liff.isInClient()) {
-                    liff.sendMessages([{
-                        type: 'text',
-                        text: messageText
-                    }]).then(() => {
-                        document.getElementById('status').innerText = "報到成功！視窗即將關閉";
-                        setTimeout(() => { liff.closeWindow(); }, 1500);
-                    }).catch((err) => {
-                        document.getElementById('status').innerText = "訊息發送失敗，請手動回傳。";
-                        console.error("SendMessage Error:", err);
-                    });
-                } else {
-                    document.getElementById('status').innerText = "請在 LINE 內使用此功能";
-                }
-
-            }).catch((err) => {
-                document.getElementById('status').innerText = "定位權限遭拒：請點選『允許』分享位置。";
-                console.error("Location Error:", err);
-            });
-        }
-
-        // 啟動程式
-        window.onload = initializeLiff;
+        window.onload = function() {
+            // 直接使用您的正式 LIFF ID
+            liff.init({ liffId: "2009589320-jnRQxLaF" })
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                    } else {
+                        document.getElementById('status').innerText = "正在讀取 GPS...";
+                        liff.getLocation().then(res => {
+                            const msg = `【司機回報：到點】\n座標：${res.latitude.toFixed(6)}, ${res.longitude.toFixed(6)}\n時間：${new Date().toLocaleString('zh-TW')}`;
+                            liff.sendMessages([{ type: 'text', text: msg }])
+                                .then(() => {
+                                    document.getElementById('status').innerText = "回報完成！";
+                                    setTimeout(() => liff.closeWindow(), 1000);
+                                });
+                        }).catch(err => alert("請開啟定位權限並重試"));
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('status').innerText = "錯誤：" + err.message;
+                });
+        };
     </script>
 </body>
 </html>
