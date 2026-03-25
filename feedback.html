@@ -6,79 +6,29 @@
     <title>沐森商務｜賓客禮遇回饋</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        body { 
-            background-color: #1a1a1a; 
-            color: #d4af37; 
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; 
-            text-align: center; 
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .card { 
-            border: 1px solid #d4af37; 
-            border-radius: 15px; 
-            padding: 30px 20px; 
-            background: linear-gradient(145deg, #222, #111); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
-            max-width: 400px;
-            width: 100%;
-        }
+        body { background-color: #1a1a1a; color: #d4af37; font-family: 'PingFang TC', sans-serif; text-align: center; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { border: 1px solid #d4af37; border-radius: 15px; padding: 30px 20px; background: linear-gradient(145deg, #222, #111); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 400px; width: 100%; }
         h2 { font-weight: 300; letter-spacing: 3px; margin-bottom: 10px; color: #fff; }
-        p.subtitle { font-size: 13px; color: #888; margin-bottom: 30px; letter-spacing: 1px; }
-        
-        /* 五星評分樣式 */
+        p.subtitle { font-size: 13px; color: #888; margin-bottom: 30px; }
         .star-rating { font-size: 35px; margin: 25px 0; cursor: pointer; display: flex; justify-content: center; gap: 8px; }
-        .star { color: #444; transition: 0.3s; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .star { color: #444; transition: 0.3s; }
         .star.active { color: #d4af37; text-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
-
-        /* 標籤樣式 */
         .tag-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 25px 0; }
         .tag { border: 1px solid #d4af37; padding: 10px 18px; border-radius: 25px; font-size: 14px; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.3); }
-        .tag.selected { background-color: #d4af37; color: #1a1a1a; font-weight: bold; box-shadow: 0 0 10px #d4af37; }
-
-        /* 按鈕樣式 */
-        button { 
-            background: linear-gradient(to bottom, #d4af37, #b8860b); 
-            color: #1a1a1a; 
-            border: none; 
-            padding: 16px; 
-            border-radius: 50px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 25px; 
-            width: 100%;
-            letter-spacing: 2px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        button:active { transform: scale(0.98); opacity: 0.9; }
+        .tag.selected { background-color: #d4af37; color: #1a1a1a; font-weight: bold; }
+        button { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 16px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 25px; width: 100%; letter-spacing: 2px; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2>尊貴賓客，感謝搭乘</h2>
         <p class="subtitle">您的滿意是沐森唯一的追求</p>
-        
         <div class="star-rating" id="starGroup">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
+            <span class="star" data-value="1">★</span><span class="star" data-value="2">★</span><span class="star" data-value="3">★</span><span class="star" data-value="4">★</span><span class="star" data-value="5">★</span>
         </div>
-
         <div class="tag-group" id="tagGroup">
-            <div class="tag">準時抵達</div>
-            <div class="tag">車內整潔</div>
-            <div class="tag">駕駛平穩</div>
-            <div class="tag">協助行李</div>
-            <div class="tag">服務禮貌</div>
+            <div class="tag">準時抵達</div><div class="tag">車內整潔</div><div class="tag">駕駛平穩</div><div class="tag">協助行李</div><div class="tag">服務禮貌</div>
         </div>
-
         <button onclick="submitFeedback()">提交評鑑回饋</button>
     </div>
 
@@ -86,72 +36,47 @@
         let selectedStars = 0;
         let selectedTags = [];
 
-        // 初始化 LIFF
         async function main() {
             try {
-                await liff.init({ liffId: "2009589320-bkILzdEX" }); // 您的正確 LIFF ID
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                }
-            } catch (err) {
-                console.error("LIFF 初始化失敗", err);
-            }
+                await liff.init({ liffId: "2009589320-bkILzdEX" });
+                if (!liff.isLoggedIn()) { liff.login(); }
+            } catch (err) { console.error(err); }
         }
         main();
 
-        // 點擊星星邏輯
         document.querySelectorAll('.star').forEach(star => {
             star.onclick = function() {
                 selectedStars = this.dataset.value;
-                document.querySelectorAll('.star').forEach(s => {
-                    s.classList.toggle('active', s.dataset.value <= selectedStars);
-                });
+                document.querySelectorAll('.star').forEach(s => s.classList.toggle('active', s.dataset.value <= selectedStars));
             }
         });
 
-        // 點擊標籤邏輯
         document.querySelectorAll('.tag').forEach(tag => {
             tag.onclick = function() {
                 this.classList.toggle('selected');
                 let text = this.innerText;
-                if (selectedTags.includes(text)) {
-                    selectedTags = selectedTags.filter(t => t !== text);
-                } else {
-                    selectedTags.push(text);
-                }
+                selectedTags.includes(text) ? selectedTags = selectedTags.filter(t => t !== text) : selectedTags.push(text);
             }
         });
 
-        // 提交資料到 GAS
         async function submitFeedback() {
-            if (selectedStars === 0) {
-                alert('請先為服務評分，謝謝！');
-                return;
-            }
+            if (selectedStars === 0) { alert('請先為服務評分，謝謝！'); return; }
 
-            const profile = await liff.getProfile(); // 自動抓取客人 LINE 名字
-            
-            // 重要：請將下方的 URL 換成您 GAS 部署後的「網頁應用程式網址」
-            const gasUrl = '您的_GAS_部署網址'; 
+            // 取得星星圖示（視覺化效果）
+            let starsIcon = "⭐".repeat(selectedStars);
+            let feedbackText = `【 沐森商務｜服務評鑑回饋 】\n\n滿意程度：${starsIcon}\n優質標籤：${selectedTags.join('、') || '無'}\n\n感謝您的回饋，期待下次再為您服務！`;
 
             try {
-                await fetch(gasUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'FEEDBACK',
-                        userName: profile.displayName,
-                        stars: selectedStars,
-                        tags: selectedTags.join(','),
-                        timestamp: new Date().toLocaleString()
-                    })
-                });
-                
-                alert('感謝您的寶貴回饋，祝您旅途愉快！');
-                liff.closeWindow(); // 提交後自動關閉頁面
+                // 直接發送訊息回 LINE 聊天室
+                if (liff.isInClient()) {
+                    await liff.sendMessages([{ type: 'text', text: feedbackText }]);
+                    alert('感謝您的寶貴回饋！');
+                    liff.closeWindow();
+                } else {
+                    alert('請在 LINE 內使用此功能');
+                }
             } catch (error) {
-                alert('提交失敗，請檢查網路連線或稍後再試。');
+                alert('提交失敗，請檢查 LINE 權限（chat_message.write）');
                 console.error(error);
             }
         }
