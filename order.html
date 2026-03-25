@@ -8,17 +8,16 @@
     <style>
         body { background-color: #1a1a1a; color: #d4af37; font-family: 'PingFang TC', sans-serif; margin: 0; padding: 15px; }
         .container { max-width: 500px; margin: auto; background: #222; padding: 25px; border-radius: 15px; border: 1px solid #d4af37; box-shadow: 0 10px 40px rgba(0,0,0,0.8); box-sizing: border-box; }
-        h3 { text-align: center; font-weight: 300; letter-spacing: 2px; color: #fff; margin: 0 0 20px 0; }
+        h3 { text-align: center; font-weight: 300; letter-spacing: 2px; color: #fff; margin-bottom: 20px; }
         .tab-group { display: flex; margin-bottom: 25px; gap: 10px; }
-        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; font-size: 15px; transition: 0.3s; }
+        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; transition: 0.3s; }
         .tab.active { background: #d4af37; color: #1a1a1a; font-weight: bold; }
         .form-group { margin-bottom: 18px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; letter-spacing: 1px; }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; }
-        input:focus { border-color: #d4af37; }
-        .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin-top: 5px; cursor: pointer; border-radius: 8px; font-size: 14px; }
-        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
-        .footer-note { font-size: 12px; color: #666; margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; line-height: 1.8; text-align: center; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; }
+        .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin-top: 5px; cursor: pointer; border-radius: 8px; }
+        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; }
+        .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -48,26 +47,25 @@
                 <input type="time" id="time" required>
             </div>
 
-            <div class="form-group">
-                <label>上車地址</label>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                    <select id="city" style="flex: 1;">
-                        <option value="基隆市">基隆市</option>
-                        <option value="台北市">台北市</option>
-                        <option value="新北市">新北市</option>
-                        <option value="桃園市">桃園市</option>
-                        <option value="新竹市">新竹市</option>
-                    </select>
-                    <input type="text" id="district" style="flex: 2;" placeholder="行政區與門牌" required>
+            <div class="form-group" id="pickupGroup">
+                <label id="pickupLabel">上車地址</label>
+                <div id="pickupDropdown" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <select id="pCity" style="flex: 1;"></select>
+                    <input type="text" id="pDist" style="flex: 2;" placeholder="行政區與門牌">
                 </div>
+                <input type="text" id="pText" style="display:none;" placeholder="例如：桃園機場第一航廈">
             </div>
 
             <div id="extraAddressGroup"></div>
             <button type="button" class="add-btn" onclick="addAddress()">＋ 新增加點地址</button>
 
-            <div class="form-group" style="margin-top:20px;">
-                <label>下車地址 (目的地)</label>
-                <input type="text" id="dropoff" placeholder="例如：桃園機場第一航廈" required>
+            <div class="form-group" id="dropoffGroup" style="margin-top:20px;">
+                <label id="dropoffLabel">下車地址 (目的地)</label>
+                <input type="text" id="dText" placeholder="例如：桃園機場第一航廈">
+                <div id="dropoffDropdown" style="display: none; gap: 8px;">
+                    <select id="dCity" style="flex: 1;"></select>
+                    <input type="text" id="dDist" style="flex: 2;" placeholder="行政區與門牌">
+                </div>
             </div>
 
             <div class="form-group">
@@ -77,7 +75,7 @@
 
             <div class="form-group">
                 <label>備註 (如：兒童座椅、特殊需求)</label>
-                <textarea id="memo" rows="2" placeholder="如有兒童座椅需求請在此註明"></textarea>
+                <textarea id="memo" rows="2"></textarea>
             </div>
 
             <button type="button" class="submit-btn" onclick="submitOrder()">確認預約，送出需求</button>
@@ -91,22 +89,23 @@
 
     <script>
         let currentMode = 'departure';
-        let userName = "";
+        const cities = ["基隆市","台北市","新北市","桃園市","新竹市","新竹縣","苗栗縣","台中市","彰化縣","南投縣","雲林縣","嘉義市","嘉義縣","台南市","高雄市"];
 
         async function main() {
             try {
-                // 使用您最新的訂單專用 LIFF ID
                 await liff.init({ liffId: "2009589320-tRfh7Al6" }); 
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    const profile = await liff.getProfile();
-                    userName = profile.displayName;
-                    document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
-                }
-            } catch (err) {
-                console.error("LIFF 初始化失敗", err);
-            }
+                if (!liff.isLoggedIn()) liff.login();
+                const profile = await liff.getProfile();
+                document.getElementById('userNameDisplay').innerText = `尊貴的 ${profile.displayName} 您好`;
+                
+                // 初始化下拉選單
+                const pSelect = document.getElementById('pCity');
+                const dSelect = document.getElementById('dCity');
+                cities.forEach(c => {
+                    pSelect.add(new Option(c, c));
+                    dSelect.add(new Option(c, c));
+                });
+            } catch (err) { console.error(err); }
         }
         main();
 
@@ -114,8 +113,21 @@
             currentMode = mode;
             document.getElementById('tabDep').classList.toggle('active', mode === 'departure');
             document.getElementById('tabArr').classList.toggle('active', mode === 'arrival');
+            
             document.getElementById('flightLabel').innerText = mode === 'departure' ? '去程 班機號碼' : '回程 班機號碼';
             document.getElementById('timeLabel').innerText = mode === 'departure' ? '上車時間 (建議起飛前3小時)' : '落地時間';
+            
+            if (mode === 'departure') { // 送機
+                document.getElementById('pickupDropdown').style.display = 'flex';
+                document.getElementById('pText').style.display = 'none';
+                document.getElementById('dropoffDropdown').style.display = 'none';
+                document.getElementById('dText').style.display = 'block';
+            } else { // 接機
+                document.getElementById('pickupDropdown').style.display = 'none';
+                document.getElementById('pText').style.display = 'block';
+                document.getElementById('dropoffDropdown').style.display = 'flex';
+                document.getElementById('dText').style.display = 'none';
+            }
         }
 
         function addAddress() {
@@ -127,44 +139,41 @@
         }
 
         async function submitOrder() {
-            const date = document.getElementById('date').value;
-            const phone = document.getElementById('phone').value;
-            const flight = document.getElementById('flightNum').value;
-            const time = document.getElementById('time').value;
+            let pickup = currentMode === 'departure' ? 
+                document.getElementById('pCity').value + document.getElementById('pDist').value : 
+                document.getElementById('pText').value;
+            
+            let dropoff = currentMode === 'departure' ? 
+                document.getElementById('dText').value : 
+                document.getElementById('dCity').value + document.getElementById('dDist').value;
 
-            if (!date || !phone || !flight || !time) {
-                alert('請完整填寫必填欄位，謝謝！');
-                return;
-            }
-
-            let extras = Array.from(document.querySelectorAll('.extra-addr')).map(i => i.value).filter(v => v).join(' / ');
+            let extras = Array.from(document.querySelectorAll('.extra-addr'))
+                              .map(i => i.value).filter(v => v);
             
             let orderText = `【 沐森商務｜預約訂車需求 】\n\n`;
-            orderText += `🔘 服務類型：${currentMode === 'departure' ? '送機服務 🛫' : '接機服務 🛬'}\n`;
-            orderText += `👤 貴賓姓名：${userName}\n`;
-            orderText += `📅 出發日期：${date}\n`;
-            orderText += `📞 聯絡電話：${phone}\n`;
-            orderText += `✈️ 班機號碼：${flight}\n`;
-            orderText += `⏰ ${currentMode === 'departure' ? '上車時間' : '落地時間'}：${time}\n`;
-            orderText += `📍 上車地址：${document.getElementById('city').value}${document.getElementById('district').value}\n`;
-            if(extras) orderText += `➕ 加點地址：${extras}\n`;
-            orderText += `🏁 下車地址：${document.getElementById('dropoff').value}\n`;
-            orderText += `🧳 行利尺寸：${document.getElementById('luggage').value}\n`;
-            orderText += `📝 備註內容：${document.getElementById('memo').value || '無'}\n\n`;
+            orderText += `🔘 服務：${currentMode === 'departure' ? '送機 🛫' : '接機 🛬'}\n`;
+            orderText += `📅 日期：${document.getElementById('date').value}\n`;
+            orderText += `📞 電話：${document.getElementById('phone').value}\n`;
+            orderText += `✈️ 班機：${document.getElementById('flightNum').value}\n`;
+            orderText += `⏰ 時間：${document.getElementById('time').value}\n`;
+            orderText += `📍 起點：${pickup}\n`;
+            
+            // 修正：列出所有加點地址
+            if(extras.length > 0) {
+                extras.forEach((addr, index) => {
+                    orderText += `➕ 加點${index+1}：${addr}\n`;
+                });
+            }
+            
+            orderText += `🏁 終點：${dropoff}\n`;
+            orderText += `🧳 行李：${document.getElementById('luggage').value}\n`;
+            orderText += `📝 備註：${document.getElementById('memo').value || '無'}\n\n`;
             orderText += `--- 沐森整合｜卓越隨行 ---`;
 
-            try {
-                if (liff.isInClient()) {
-                    await liff.sendMessages([{ type: 'text', text: orderText }]);
-                    alert('您的訂單需求已成功送出！');
-                    liff.closeWindow();
-                } else {
-                    alert('請在 LINE App 內開啟此連結以完成訂單送出。');
-                }
-            } catch (error) {
-                alert('傳送失敗，請確認 Scopes 權限（chat_message.write）已勾選。');
-                console.error(error);
-            }
+            if (liff.isInClient()) {
+                await liff.sendMessages([{ type: 'text', text: orderText }]);
+                liff.closeWindow();
+            } else { alert(orderText); }
         }
     </script>
 </body>
