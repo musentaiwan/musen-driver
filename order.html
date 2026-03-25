@@ -17,8 +17,11 @@
         .form-group { margin-bottom: 18px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
         input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; -webkit-appearance: none; }
-        .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; color: #d4af37; }
-        .checkbox-group input { width: 18px; height: 18px; cursor: pointer; }
+        /* 修正勾選框樣式，確保好點擊 */
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: #2a2a2a; border-radius: 8px; cursor: pointer; }
+        .checkbox-group input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; -webkit-appearance: checkbox; }
+        .checkbox-group label { margin: 0; color: #d4af37; cursor: pointer; flex: 1; }
+        
         .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 8px; font-size: 14px; }
         .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.6; }
@@ -43,8 +46,9 @@
                     <select id="dep-city" style="flex: 1;"></select>
                     <input type="text" id="dep-dist" style="flex: 2;" placeholder="行政區與門牌">
                 </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="save-address"> <label for="save-address">下次繼續使用這個地址</label>
+                <div class="checkbox-group" onclick="document.getElementById('save-address').click(); event.stopPropagation();">
+                    <input type="checkbox" id="save-address" onclick="event.stopPropagation();">
+                    <label>下次繼續使用這個地址</label>
                 </div>
             </div>
             <div id="depExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
@@ -88,13 +92,18 @@
                 document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
             } else { liff.login(); }
 
-            // 填充縣市選單
             const dSel = document.getElementById('dep-city');
             const aSel = document.getElementById('arr-city');
             allCities.forEach(c => { dSel.add(new Option(c, c)); aSel.add(new Option(c, c)); });
 
-            // 【新功能】載入記憶的地址
-            loadSavedAddress();
+            // 頁面開啟時，只負責「讀取」，不自動「寫入」
+            if (localStorage.getItem('musen_city')) document.getElementById('dep-city').value = localStorage.getItem('musen_city');
+            if (localStorage.getItem('musen_dist')) document.getElementById('dep-dist').value = localStorage.getItem('musen_dist');
+            if (localStorage.getItem('musen_phone')) {
+                const p = localStorage.getItem('musen_phone');
+                document.getElementById('dep-phone').value = p;
+                document.getElementById('arr-phone').value = p;
+            }
         }
         main();
 
@@ -103,18 +112,6 @@
             document.getElementById('tabArr').className = (mode === 'arrival' ? 'tab active' : 'tab');
             document.getElementById('depSection').className = (mode === 'departure' ? 'form-section active' : 'form-section');
             document.getElementById('arrSection').className = (mode === 'arrival' ? 'form-section active' : 'form-section');
-        }
-
-        function loadSavedAddress() {
-            const savedCity = localStorage.getItem('musen_city');
-            const savedDist = localStorage.getItem('musen_dist');
-            const savedPhone = localStorage.getItem('musen_phone');
-            if (savedCity) document.getElementById('dep-city').value = savedCity;
-            if (savedDist) document.getElementById('dep-dist').value = savedDist;
-            if (savedPhone) {
-                document.getElementById('dep-phone').value = savedPhone;
-                document.getElementById('arr-phone').value = savedPhone;
-            }
         }
 
         function addExtra(type) {
@@ -130,11 +127,12 @@
             let arrDate = document.getElementById('arr-date').value;
             if (!depDate && !arrDate) return alert("請填寫日期");
 
-            // 【新功能】如果勾選記憶地址，則存入 localStorage
-            if (document.getElementById('save-address').checked) {
+            // 【核心修正】只有在勾選的情況下，才執行儲存動作
+            const isSaveChecked = document.getElementById('save-address').checked;
+            if (isSaveChecked) {
                 localStorage.setItem('musen_city', document.getElementById('dep-city').value);
                 localStorage.setItem('musen_dist', document.getElementById('dep-dist').value);
-                localStorage.setItem('musen_phone', document.getElementById('dep-phone').value);
+                localStorage.setItem('musen_phone', document.getElementById('dep-phone').value || document.getElementById('arr-phone').value);
             }
 
             let finalMsg = `【 沐森商務｜預約訂車需求 】\n👤 姓名：${userName}\n\n`;
@@ -144,7 +142,7 @@
                 let start = document.getElementById('dep-city').value + document.getElementById('dep-dist').value;
                 let extras = "";
                 document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛫 送機服務\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n🧳 行李：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                finalMsg += `🛫 送機服務\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n🧳 行利：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
                 payloads.push({ timestamp: new Date().toLocaleString(), type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depDate, start: start + extras, end: document.getElementById('dep-end').value, memo: document.getElementById('dep-memo').value });
             }
 
@@ -152,7 +150,7 @@
                 let end = document.getElementById('arr-city').value + document.getElementById('arr-dist').value;
                 let extras = "";
                 document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛬 接機服務\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n🧳 行李：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                finalMsg += `🛬 接機服務\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n🧳 行利：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
                 payloads.push({ timestamp: new Date().toLocaleString(), type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrDate, start: document.getElementById('arr-start').value, end: end + extras, memo: document.getElementById('arr-memo').value });
             }
 
@@ -161,7 +159,7 @@
             if (liff.isInClient()) {
                 await liff.sendMessages([{ type: 'text', text: finalMsg }]);
                 liff.closeWindow();
-            } else { alert("請在 LINE 內開啟連結"); }
+            } else { alert("請在 LINE 內送出"); }
         }
     </script>
 </body>
