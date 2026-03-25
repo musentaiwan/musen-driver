@@ -10,7 +10,7 @@
         .container { max-width: 500px; margin: auto; background: #222; padding: 25px; border-radius: 15px; border: 1px solid #d4af37; box-shadow: 0 10px 40px rgba(0,0,0,0.8); box-sizing: border-box; }
         h3 { text-align: center; font-weight: 300; letter-spacing: 2px; color: #fff; margin-bottom: 20px; }
         .tab-group { display: flex; margin-bottom: 25px; gap: 10px; }
-        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; transition: 0.3s; font-size: 15px; }
+        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; font-size: 15px; transition: 0.3s; }
         .tab.active { background: #d4af37; color: #1a1a1a; font-weight: bold; }
         .form-section { display: none; }
         .form-section.active { display: block; }
@@ -33,9 +33,9 @@
 
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
-            <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入電話"></div>
-            <div class="form-group"><label>去程班機</label><input type="text" id="dep-flight" placeholder="例如：BR198"></div>
-            <div class="form-group"><label>上車時間</label><input type="time" id="dep-time"></div>
+            <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入連絡電話"></div>
+            <div class="form-group"><label>去程 班機號碼</label><input type="text" id="dep-flight" placeholder="例如：BR198"></div>
+            <div class="form-group"><label>上車時間 (建議起飛前3小時)</label><input type="time" id="dep-time"></div>
             <div class="form-group">
                 <label>上車起點</label>
                 <div style="display: flex; gap: 8px;">
@@ -52,8 +52,8 @@
 
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
-            <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入電話"></div>
-            <div class="form-group"><label>回程班機</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
+            <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入連絡電話"></div>
+            <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
             <div class="form-group"><label>接機起點 (機場/航廈)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
             <div id="arrExtraGroup"></div>
@@ -69,7 +69,7 @@
             <div class="form-group"><label>接機備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
 
-        <button type="button" class="submit-btn" onclick="submitAll()">確認並送出預約</button>
+        <button type="button" class="submit-btn" onclick="submitAll()">確認並送出所有預約</button>
 
         <div class="footer-note">
             ※ 如需包車、裝修改造、產業合作，請直接與官方對談。<br>
@@ -78,7 +78,7 @@
     </div>
 
     <script>
-        const allCities = ["基隆市","台北市","新北市","桃園市","新竹市","新竹縣","苗栗縣","台中市","彰化縣","南投縣","雲林縣","嘉義市","嘉義縣","台南市","高雄市","屏東縣","宜蘭縣","花蓮縣","台東縣","澎湖縣","金門縣"];
+        const allCities = ["基隆市","台北市","新北市","桃園市","新竹市","新竹縣","苗栗縣","台中市","彰化縣","南投縣","雲林縣","嘉義市","嘉義縣","台南市","高雄市","屏東縣","宜蘭縣","花蓮縣","台東縣","澎湖縣","金門縣","連江縣"];
         let userName = "賓客";
 
         async function main() {
@@ -90,6 +90,7 @@
                     document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
                 } else { liff.login(); }
                 
+                // 填充所有縣市下拉選單
                 const dSel = document.getElementById('dep-city');
                 const aSel = document.getElementById('arr-city');
                 allCities.forEach(c => {
@@ -101,8 +102,10 @@
         main();
 
         function switchTab(mode) {
+            // 切換按鈕樣式
             document.getElementById('tabDep').className = (mode === 'departure' ? 'tab active' : 'tab');
             document.getElementById('tabArr').className = (mode === 'arrival' ? 'tab active' : 'tab');
+            // 切換區塊顯示
             document.getElementById('depSection').className = (mode === 'departure' ? 'form-section active' : 'form-section');
             document.getElementById('arrSection').className = (mode === 'arrival' ? 'form-section active' : 'form-section');
         }
@@ -118,16 +121,19 @@
         async function submitAll() {
             let finalMsg = `【 沐森商務｜預約訂車需求 】\n👤 姓名：${userName}\n\n`;
             
-            // 檢查有沒有填日期來判斷該單是否有內容
-            let hasDep = document.getElementById('dep-date').value !== "";
-            let hasArr = document.getElementById('arr-date').value !== "";
+            // 獨立判定送機是否有內容
+            const depDate = document.getElementById('dep-date').value;
+            const hasDep = depDate !== "";
 
-            if (!hasDep && !hasArr) return alert("請填寫預約日期");
+            // 獨立判定接機是否有內容
+            const arrDate = document.getElementById('arr-date').value;
+            const hasArr = arrDate !== "";
 
-            // 組合送機訊息
+            if (!hasDep && !hasArr) return alert("請至少填寫預約日期，謝謝！");
+
             if (hasDep) {
                 finalMsg += `🛫 --- 送機服務 ---\n`;
-                finalMsg += `📅 日期：${document.getElementById('dep-date').value}\n`;
+                finalMsg += `📅 日期：${depDate}\n`;
                 finalMsg += `📞 電話：${document.getElementById('dep-phone').value}\n`;
                 finalMsg += `✈️ 班機：${document.getElementById('dep-flight').value}\n`;
                 finalMsg += `⏰ 上車：${document.getElementById('dep-time').value}\n`;
@@ -138,10 +144,9 @@
                 finalMsg += `📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
             }
 
-            // 組合接機訊息
             if (hasArr) {
                 finalMsg += `🛬 --- 接機服務 ---\n`;
-                finalMsg += `📅 日期：${document.getElementById('arr-date').value}\n`;
+                finalMsg += `📅 日期：${arrDate}\n`;
                 finalMsg += `📞 電話：${document.getElementById('arr-phone').value}\n`;
                 finalMsg += `✈️ 班機：${document.getElementById('arr-flight').value}\n`;
                 finalMsg += `⏰ 落地：${document.getElementById('arr-time').value}\n`;
