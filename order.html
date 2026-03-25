@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>沐森商務｜預約訂車系統</title>
+    <title>沐森禮賓｜預約系統</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { background-color: #1a1a1a; color: #d4af37; font-family: 'PingFang TC', sans-serif; margin: 0; padding: 15px; }
@@ -22,18 +22,27 @@
             background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none;
         }
         textarea { height: auto; min-height: 80px; }
-        select { background-image: url('data:image/svg+xml;utf8,<svg fill="%23d4af37" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position: right 10px center; }
+        
+        .address-row { display: flex; gap: 8px; width: 100%; box-sizing: border-box; }
+        .address-row select { flex: 1; min-width: 0; }
+        .address-row input { flex: 2; min-width: 0; }
 
         .checkbox-container {
             display: flex; align-items: center; margin-top: 10px; padding: 12px; background: #2a2a2a; 
-            border-radius: 8px; cursor: pointer; border: 1px solid #444; transition: 0.2s;
+            border-radius: 8px; cursor: pointer; border: 1px solid #444; width: 100%; box-sizing: border-box;
         }
-        input[type="checkbox"] {
-            width: 20px; height: 20px; margin-right: 12px; cursor: pointer; accent-color: #d4af37; -webkit-appearance: checkbox;
-        }
+        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; accent-color: #d4af37; -webkit-appearance: checkbox; }
         .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; flex: 1; }
-        .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 8px; font-size: 14px; }
-        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; }
+
+        /* 公約區塊樣式 */
+        .policy-box {
+            margin-top: 25px; padding: 15px; background: #2d2d2d; border-radius: 10px; border: 1px solid #444; font-size: 13px; color: #ccc; line-height: 1.6;
+        }
+        .policy-title { color: #d4af37; font-weight: bold; margin-bottom: 8px; display: block; text-align: center; border-bottom: 1px solid #444; padding-bottom: 8px; }
+        .policy-content { height: 140px; overflow-y: scroll; padding-right: 5px; }
+        .policy-content strong { color: #fff; text-decoration: underline; }
+
+        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
     </style>
 </head>
@@ -52,9 +61,9 @@
             <div class="form-group"><label>上車時間</label><input type="time" id="dep-time"></div>
             <div class="form-group">
                 <label>上車起點</label>
-                <div style="display: flex; gap: 8px;">
-                    <select id="dep-city" style="flex: 1;"></select>
-                    <input type="text" id="dep-dist" style="flex: 2;" placeholder="行政區與門牌">
+                <div class="address-row">
+                    <select id="dep-city"></select>
+                    <input type="text" id="dep-dist" placeholder="行政區與門牌">
                 </div>
                 <div class="checkbox-container" onclick="toggleCB('save-dep')">
                     <input type="checkbox" id="save-dep" onclick="event.stopPropagation()">
@@ -76,9 +85,9 @@
             <div id="arrExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
-                <div style="display: flex; gap: 8px;">
-                    <select id="arr-city" style="flex: 1;"></select>
-                    <input type="text" id="arr-dist" style="flex: 2;" placeholder="行政區與門牌">
+                <div class="address-row">
+                    <select id="arr-city"></select>
+                    <input type="text" id="arr-dist" placeholder="行政區與門牌">
                 </div>
                 <div class="checkbox-container" onclick="toggleCB('save-arr')">
                     <input type="checkbox" id="save-arr" onclick="event.stopPropagation()">
@@ -87,6 +96,21 @@
             </div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="arr-lug" placeholder="例如：28吋x2"></div>
             <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
+        </div>
+
+        <div class="policy-box">
+            <span class="policy-title">沐森禮賓 取消與退款公約</span>
+            <div class="policy-content">
+                1. <strong>用車 48 小時前</strong>取消：全額退費（需扣除匯款手續費）。<br>
+                2. <strong>用車 24-48 小時內</strong>取消：扣除 50% 車資費用。<br>
+                3. <strong>用車 24 小時內或當日</strong>取消：不予退費，敬請見諒。<br>
+                4. 如遇不可抗力之因素（如航班取消、天災），請提供證明，我們將協助改派或保留資格，不收手續費。<br>
+                5. 司機抵達約定地點後等候 30 分鐘且聯繫不上，視同放棄服務，不予退費。
+            </div>
+            <div class="checkbox-container" onclick="toggleCB('agree-policy')" style="margin-top: 10px; border: 1px solid #d4af37;">
+                <input type="checkbox" id="agree-policy" onclick="event.stopPropagation()">
+                <span class="checkbox-label" style="font-weight: bold;">我已閱讀並同意以上取消退款公約</span>
+            </div>
         </div>
 
         <button type="button" class="submit-btn" onclick="submitAll()">確認預約並送出</button>
@@ -115,22 +139,22 @@
         main();
 
         function loadStorage() {
-            // 只在有記憶勾選的情況下才填入地址
-            if (localStorage.getItem('dep_cb') === 'true') {
-                document.getElementById('save-dep').checked = true;
-                if (localStorage.getItem('dep_city')) document.getElementById('dep-city').value = localStorage.getItem('dep_city');
-                if (localStorage.getItem('dep_dist')) document.getElementById('dep-dist').value = localStorage.getItem('dep_dist');
+            const depCB = localStorage.getItem('dep_cb') === 'true';
+            document.getElementById('save-dep').checked = depCB;
+            if (depCB) {
+                document.getElementById('dep-city').value = localStorage.getItem('dep_city') || "基隆市";
+                document.getElementById('dep-dist').value = localStorage.getItem('dep_dist') || "";
             }
-            if (localStorage.getItem('arr_cb') === 'true') {
-                document.getElementById('save-arr').checked = true;
-                if (localStorage.getItem('arr_city')) document.getElementById('arr-city').value = localStorage.getItem('arr_city');
-                if (localStorage.getItem('arr_dist')) document.getElementById('arr-dist').value = localStorage.getItem('arr_dist');
+            const arrCB = localStorage.getItem('arr_cb') === 'true';
+            document.getElementById('save-arr').checked = arrCB;
+            if (arrCB) {
+                document.getElementById('arr-city').value = localStorage.getItem('arr_city') || "基隆市";
+                document.getElementById('arr-dist').value = localStorage.getItem('arr_dist') || "";
             }
-            // 電話則是只要有存過就填入
             if (localStorage.getItem('musen_phone')) {
-                const p = localStorage.getItem('musen_phone');
-                document.getElementById('dep-phone').value = p;
-                document.getElementById('arr-phone').value = p;
+                const phone = localStorage.getItem('musen_phone');
+                document.getElementById('dep-phone').value = phone;
+                document.getElementById('arr-phone').value = phone;
             }
         }
 
@@ -155,34 +179,31 @@
         }
 
         async function submitAll() {
+            if (!document.getElementById('agree-policy').checked) {
+                return alert("請點選下方勾選框，同意「取消退款公約」後方可送出預約。");
+            }
+
             const depDate = document.getElementById('dep-date').value;
             const arrDate = document.getElementById('arr-date').value;
-            if (!depDate && !arrDate) return alert("請填寫日期");
+            if (!depDate && !arrDate) return alert("請填寫預約日期");
 
-            // 儲存或清除邏輯
             const depCB = document.getElementById('save-dep').checked;
             const arrCB = document.getElementById('save-arr').checked;
-
             localStorage.setItem('dep_cb', depCB);
             localStorage.setItem('arr_cb', arrCB);
 
-            // 如果沒勾選，就移除舊記憶
             if (depCB) {
                 localStorage.setItem('dep_city', document.getElementById('dep-city').value);
                 localStorage.setItem('dep_dist', document.getElementById('dep-dist').value);
             } else {
-                localStorage.removeItem('dep_city');
-                localStorage.removeItem('dep_dist');
+                localStorage.removeItem('dep_city'); localStorage.removeItem('dep_dist');
             }
-
             if (arrCB) {
                 localStorage.setItem('arr_city', document.getElementById('arr-city').value);
                 localStorage.setItem('arr_dist', document.getElementById('arr-dist').value);
             } else {
-                localStorage.removeItem('arr_city');
-                localStorage.removeItem('arr_dist');
+                localStorage.removeItem('arr_city'); localStorage.removeItem('arr_dist');
             }
-
             if (depCB || arrCB) {
                 localStorage.setItem('musen_phone', document.getElementById('dep-phone').value || document.getElementById('arr-phone').value);
             }
