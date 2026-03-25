@@ -14,7 +14,7 @@
         .tab.active { background: #d4af37; color: #1a1a1a; font-weight: bold; }
         .form-group { margin-bottom: 18px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; -webkit-appearance: none; }
         .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin-top: 5px; cursor: pointer; border-radius: 8px; }
         .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
@@ -47,8 +47,8 @@
                 <input type="time" id="time" required>
             </div>
 
-            <div class="form-group" id="pickupGroup">
-                <label id="pickupLabel">上車地址</label>
+            <div class="form-group">
+                <label id="pickupLabel">上車地址 (起點)</label>
                 <div id="pickupDropdown" style="display: flex; gap: 8px; margin-bottom: 8px;">
                     <select id="pCity" style="flex: 1;"></select>
                     <input type="text" id="pDist" style="flex: 2;" placeholder="行政區與門牌">
@@ -59,7 +59,7 @@
             <div id="extraAddressGroup"></div>
             <button type="button" class="add-btn" onclick="addAddress()">＋ 新增加點地址</button>
 
-            <div class="form-group" id="dropoffGroup" style="margin-top:20px;">
+            <div class="form-group" style="margin-top:20px;">
                 <label id="dropoffLabel">下車地址 (目的地)</label>
                 <input type="text" id="dText" placeholder="例如：桃園機場第一航廈">
                 <div id="dropoffDropdown" style="display: none; gap: 8px;">
@@ -89,19 +89,22 @@
 
     <script>
         let currentMode = 'departure';
-        const cities = ["基隆市","台北市","新北市","桃園市","新竹市","新竹縣","苗栗縣","台中市","彰化縣","南投縣","雲林縣","嘉義市","嘉義縣","台南市","高雄市"];
+        const allCities = ["基隆市","台北市","新北市","桃園市","新竹市","新竹縣","苗栗縣","台中市","彰化縣","南投縣","雲林縣","嘉義市","嘉義縣","台南市","高雄市","屏東縣","宜蘭縣","花蓮縣","台東縣"];
+        let userName = "賓客";
 
         async function main() {
             try {
                 await liff.init({ liffId: "2009589320-tRfh7Al6" }); 
-                if (!liff.isLoggedIn()) liff.login();
-                const profile = await liff.getProfile();
-                document.getElementById('userNameDisplay').innerText = `尊貴的 ${profile.displayName} 您好`;
+                if (liff.isLoggedIn()) {
+                    const profile = await liff.getProfile();
+                    userName = profile.displayName;
+                    document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
+                } else { liff.login(); }
                 
-                // 初始化下拉選單
+                // 填充全台縣市
                 const pSelect = document.getElementById('pCity');
                 const dSelect = document.getElementById('dCity');
-                cities.forEach(c => {
+                allCities.forEach(c => {
                     pSelect.add(new Option(c, c));
                     dSelect.add(new Option(c, c));
                 });
@@ -111,18 +114,18 @@
 
         function switchTab(mode) {
             currentMode = mode;
-            document.getElementById('tabDep').classList.toggle('active', mode === 'departure');
-            document.getElementById('tabArr').classList.toggle('active', mode === 'arrival');
+            document.getElementById('tabDep').className = (mode === 'departure' ? 'tab active' : 'tab');
+            document.getElementById('tabArr').className = (mode === 'arrival' ? 'tab active' : 'tab');
             
             document.getElementById('flightLabel').innerText = mode === 'departure' ? '去程 班機號碼' : '回程 班機號碼';
             document.getElementById('timeLabel').innerText = mode === 'departure' ? '上車時間 (建議起飛前3小時)' : '落地時間';
             
-            if (mode === 'departure') { // 送機
+            if (mode === 'departure') {
                 document.getElementById('pickupDropdown').style.display = 'flex';
                 document.getElementById('pText').style.display = 'none';
                 document.getElementById('dropoffDropdown').style.display = 'none';
                 document.getElementById('dText').style.display = 'block';
-            } else { // 接機
+            } else {
                 document.getElementById('pickupDropdown').style.display = 'none';
                 document.getElementById('pText').style.display = 'block';
                 document.getElementById('dropoffDropdown').style.display = 'flex';
@@ -139,33 +142,30 @@
         }
 
         async function submitOrder() {
-            let pickup = currentMode === 'departure' ? 
+            let startPoint = currentMode === 'departure' ? 
                 document.getElementById('pCity').value + document.getElementById('pDist').value : 
                 document.getElementById('pText').value;
             
-            let dropoff = currentMode === 'departure' ? 
+            let endPoint = currentMode === 'departure' ? 
                 document.getElementById('dText').value : 
                 document.getElementById('dCity').value + document.getElementById('dDist').value;
 
-            let extras = Array.from(document.querySelectorAll('.extra-addr'))
-                              .map(i => i.value).filter(v => v);
+            let extraInputs = document.querySelectorAll('.extra-addr');
+            let extrasText = "";
+            extraInputs.forEach((input, index) => {
+                if(input.value) extrasText += `➕ 加點${index+1}：${input.value}\n`;
+            });
             
             let orderText = `【 沐森商務｜預約訂車需求 】\n\n`;
-            orderText += `🔘 服務：${currentMode === 'departure' ? '送機 🛫' : '接機 🛬'}\n`;
+            orderText += `🔘 服務：${currentMode === 'departure' ? '送機服務 🛫' : '接機服務 🛬'}\n`;
+            orderText += `👤 姓名：${userName}\n`;
             orderText += `📅 日期：${document.getElementById('date').value}\n`;
             orderText += `📞 電話：${document.getElementById('phone').value}\n`;
             orderText += `✈️ 班機：${document.getElementById('flightNum').value}\n`;
             orderText += `⏰ 時間：${document.getElementById('time').value}\n`;
-            orderText += `📍 起點：${pickup}\n`;
-            
-            // 修正：列出所有加點地址
-            if(extras.length > 0) {
-                extras.forEach((addr, index) => {
-                    orderText += `➕ 加點${index+1}：${addr}\n`;
-                });
-            }
-            
-            orderText += `🏁 終點：${dropoff}\n`;
+            orderText += `📍 起點：${startPoint}\n`;
+            orderText += extrasText;
+            orderText += `🏁 終點：${endPoint}\n`;
             orderText += `🧳 行李：${document.getElementById('luggage').value}\n`;
             orderText += `📝 備註：${document.getElementById('memo').value || '無'}\n\n`;
             orderText += `--- 沐森整合｜卓越隨行 ---`;
@@ -173,7 +173,7 @@
             if (liff.isInClient()) {
                 await liff.sendMessages([{ type: 'text', text: orderText }]);
                 liff.closeWindow();
-            } else { alert(orderText); }
+            } else { alert("請在 LINE App 內開啟連結"); }
         }
     </script>
 </body>
