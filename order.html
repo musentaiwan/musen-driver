@@ -16,12 +16,31 @@
         .form-section.active { display: block; }
         .form-group { margin-bottom: 18px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; -webkit-appearance: none; }
-        /* 修正勾選框樣式，確保好點擊 */
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: #2a2a2a; border-radius: 8px; cursor: pointer; }
-        .checkbox-group input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; -webkit-appearance: checkbox; }
-        .checkbox-group label { margin: 0; color: #d4af37; cursor: pointer; flex: 1; }
         
+        /* 基礎輸入框樣式 */
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; }
+
+        /* 【核心修正】勾選框樣式優化 */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #444;
+        }
+        .checkbox-container:active { background: #333; }
+        #save-address {
+            width: 22px;
+            height: 22px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #d4af37; /* 控制勾選後的顏色 */
+        }
+        .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; }
+
         .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 8px; font-size: 14px; }
         .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.6; }
@@ -44,11 +63,11 @@
                 <label>上車起點</label>
                 <div style="display: flex; gap: 8px;">
                     <select id="dep-city" style="flex: 1;"></select>
-                    <input type="text" id="dep-dist" style="flex: 2;" placeholder="行政區與門牌">
+                    <input type="text" id="dep-dist" style="flex: 2;" placeholder="區域及門牌">
                 </div>
-                <div class="checkbox-group" onclick="document.getElementById('save-address').click(); event.stopPropagation();">
-                    <input type="checkbox" id="save-address" onclick="event.stopPropagation();">
-                    <label>下次繼續使用這個地址</label>
+                <div class="checkbox-container" onclick="toggleCheckbox()">
+                    <input type="checkbox" id="save-address" onclick="event.stopPropagation()">
+                    <span class="checkbox-label">下次繼續使用這個地址</span>
                 </div>
             </div>
             <div id="depExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
@@ -62,13 +81,13 @@
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話"></div>
             <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
-            <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="桃園機場第幾航廈"></div>
+            <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
             <div id="arrExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
                 <div style="display: flex; gap: 8px;">
                     <select id="arr-city" style="flex: 1;"></select>
-                    <input type="text" id="arr-dist" style="flex: 2;" placeholder="行政區與門牌">
+                    <input type="text" id="arr-dist" style="flex: 2;" placeholder="區域及門牌">
                 </div>
             </div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="arr-lug" placeholder="例如：28吋x2"></div>
@@ -96,7 +115,7 @@
             const aSel = document.getElementById('arr-city');
             allCities.forEach(c => { dSel.add(new Option(c, c)); aSel.add(new Option(c, c)); });
 
-            // 頁面開啟時，只負責「讀取」，不自動「寫入」
+            // 讀取歷史記憶
             if (localStorage.getItem('musen_city')) document.getElementById('dep-city').value = localStorage.getItem('musen_city');
             if (localStorage.getItem('musen_dist')) document.getElementById('dep-dist').value = localStorage.getItem('musen_dist');
             if (localStorage.getItem('musen_phone')) {
@@ -106,6 +125,11 @@
             }
         }
         main();
+
+        function toggleCheckbox() {
+            const cb = document.getElementById('save-address');
+            cb.checked = !cb.checked;
+        }
 
         function switchTab(mode) {
             document.getElementById('tabDep').className = (mode === 'departure' ? 'tab active' : 'tab');
@@ -123,13 +147,12 @@
         }
 
         async function submitAll() {
-            let depDate = document.getElementById('dep-date').value;
-            let arrDate = document.getElementById('arr-date').value;
+            const depDate = document.getElementById('dep-date').value;
+            const arrDate = document.getElementById('arr-date').value;
             if (!depDate && !arrDate) return alert("請填寫日期");
 
-            // 【核心修正】只有在勾選的情況下，才執行儲存動作
-            const isSaveChecked = document.getElementById('save-address').checked;
-            if (isSaveChecked) {
+            // 只有勾選時才記憶
+            if (document.getElementById('save-address').checked) {
                 localStorage.setItem('musen_city', document.getElementById('dep-city').value);
                 localStorage.setItem('musen_dist', document.getElementById('dep-dist').value);
                 localStorage.setItem('musen_phone', document.getElementById('dep-phone').value || document.getElementById('arr-phone').value);
