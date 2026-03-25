@@ -17,33 +17,24 @@
         .form-group { margin-bottom: 18px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
         
-        /* 基礎輸入框樣式 */
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; }
+        input, select, textarea { 
+            width: 100%; height: 48px; padding: 12px; border-radius: 8px; border: 1px solid #444; 
+            background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none;
+        }
+        textarea { height: auto; min-height: 80px; }
+        select { background-image: url('data:image/svg+xml;utf8,<svg fill="%23d4af37" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position: right 10px center; }
 
-        /* 【核心修正】勾選框樣式優化 */
         .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-            padding: 12px;
-            background: #2a2a2a;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 1px solid #444;
+            display: flex; align-items: center; margin-top: 10px; padding: 12px; background: #2a2a2a; 
+            border-radius: 8px; cursor: pointer; border: 1px solid #444; transition: 0.2s;
         }
-        .checkbox-container:active { background: #333; }
-        #save-address {
-            width: 22px;
-            height: 22px;
-            margin-right: 12px;
-            cursor: pointer;
-            accent-color: #d4af37; /* 控制勾選後的顏色 */
+        input[type="checkbox"] {
+            width: 20px; height: 20px; margin-right: 12px; cursor: pointer; accent-color: #d4af37; -webkit-appearance: checkbox;
         }
-        .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; }
-
+        .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; flex: 1; }
         .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 8px; font-size: 14px; }
-        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
-        .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.6; }
+        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; }
+        .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -63,11 +54,11 @@
                 <label>上車起點</label>
                 <div style="display: flex; gap: 8px;">
                     <select id="dep-city" style="flex: 1;"></select>
-                    <input type="text" id="dep-dist" style="flex: 2;" placeholder="區域及門牌">
+                    <input type="text" id="dep-dist" style="flex: 2;" placeholder="行政區與門牌">
                 </div>
-                <div class="checkbox-container" onclick="toggleCheckbox()">
-                    <input type="checkbox" id="save-address" onclick="event.stopPropagation()">
-                    <span class="checkbox-label">下次繼續使用這個地址</span>
+                <div class="checkbox-container" onclick="toggleCB('save-dep')">
+                    <input type="checkbox" id="save-dep" onclick="event.stopPropagation()">
+                    <span class="checkbox-label">下次繼續使用這個上車地址</span>
                 </div>
             </div>
             <div id="depExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
@@ -87,7 +78,11 @@
                 <label>接機終點</label>
                 <div style="display: flex; gap: 8px;">
                     <select id="arr-city" style="flex: 1;"></select>
-                    <input type="text" id="arr-dist" style="flex: 2;" placeholder="區域及門牌">
+                    <input type="text" id="arr-dist" style="flex: 2;" placeholder="行政區與門牌">
+                </div>
+                <div class="checkbox-container" onclick="toggleCB('save-arr')">
+                    <input type="checkbox" id="save-arr" onclick="event.stopPropagation()">
+                    <span class="checkbox-label">下次繼續使用這個下車地址</span>
                 </div>
             </div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="arr-lug" placeholder="例如：28吋x2"></div>
@@ -115,20 +110,33 @@
             const aSel = document.getElementById('arr-city');
             allCities.forEach(c => { dSel.add(new Option(c, c)); aSel.add(new Option(c, c)); });
 
-            // 讀取歷史記憶
-            if (localStorage.getItem('musen_city')) document.getElementById('dep-city').value = localStorage.getItem('musen_city');
-            if (localStorage.getItem('musen_dist')) document.getElementById('dep-dist').value = localStorage.getItem('musen_dist');
+            loadStorage();
+        }
+        main();
+
+        function loadStorage() {
+            // 只在有記憶勾選的情況下才填入地址
+            if (localStorage.getItem('dep_cb') === 'true') {
+                document.getElementById('save-dep').checked = true;
+                if (localStorage.getItem('dep_city')) document.getElementById('dep-city').value = localStorage.getItem('dep_city');
+                if (localStorage.getItem('dep_dist')) document.getElementById('dep-dist').value = localStorage.getItem('dep_dist');
+            }
+            if (localStorage.getItem('arr_cb') === 'true') {
+                document.getElementById('save-arr').checked = true;
+                if (localStorage.getItem('arr_city')) document.getElementById('arr-city').value = localStorage.getItem('arr_city');
+                if (localStorage.getItem('arr_dist')) document.getElementById('arr-dist').value = localStorage.getItem('arr_dist');
+            }
+            // 電話則是只要有存過就填入
             if (localStorage.getItem('musen_phone')) {
                 const p = localStorage.getItem('musen_phone');
                 document.getElementById('dep-phone').value = p;
                 document.getElementById('arr-phone').value = p;
             }
         }
-        main();
 
-        function toggleCheckbox() {
-            const cb = document.getElementById('save-address');
-            cb.checked = !cb.checked;
+        function toggleCB(id) {
+            const el = document.getElementById(id);
+            el.checked = !el.checked;
         }
 
         function switchTab(mode) {
@@ -142,7 +150,7 @@
             const group = document.getElementById(type + 'ExtraGroup');
             const div = document.createElement('div');
             div.style.marginBottom = "8px";
-            div.innerHTML = `<input type="text" class="${type}-extra" placeholder="加點地址" style="background:#2a2a2a; border:1px solid #555;">`;
+            div.innerHTML = `<input type="text" class="${type}-extra" placeholder="加點地址" style="background:#2a2a2a; border:1px solid #555; height:48px;">`;
             group.appendChild(div);
         }
 
@@ -151,10 +159,31 @@
             const arrDate = document.getElementById('arr-date').value;
             if (!depDate && !arrDate) return alert("請填寫日期");
 
-            // 只有勾選時才記憶
-            if (document.getElementById('save-address').checked) {
-                localStorage.setItem('musen_city', document.getElementById('dep-city').value);
-                localStorage.setItem('musen_dist', document.getElementById('dep-dist').value);
+            // 儲存或清除邏輯
+            const depCB = document.getElementById('save-dep').checked;
+            const arrCB = document.getElementById('save-arr').checked;
+
+            localStorage.setItem('dep_cb', depCB);
+            localStorage.setItem('arr_cb', arrCB);
+
+            // 如果沒勾選，就移除舊記憶
+            if (depCB) {
+                localStorage.setItem('dep_city', document.getElementById('dep-city').value);
+                localStorage.setItem('dep_dist', document.getElementById('dep-dist').value);
+            } else {
+                localStorage.removeItem('dep_city');
+                localStorage.removeItem('dep_dist');
+            }
+
+            if (arrCB) {
+                localStorage.setItem('arr_city', document.getElementById('arr-city').value);
+                localStorage.setItem('arr_dist', document.getElementById('arr-dist').value);
+            } else {
+                localStorage.removeItem('arr_city');
+                localStorage.removeItem('arr_dist');
+            }
+
+            if (depCB || arrCB) {
                 localStorage.setItem('musen_phone', document.getElementById('dep-phone').value || document.getElementById('arr-phone').value);
             }
 
@@ -165,7 +194,7 @@
                 let start = document.getElementById('dep-city').value + document.getElementById('dep-dist').value;
                 let extras = "";
                 document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛫 送機服務\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n🧳 行利：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                finalMsg += `🛫 送機服務\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n🧳 行李：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
                 payloads.push({ timestamp: new Date().toLocaleString(), type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depDate, start: start + extras, end: document.getElementById('dep-end').value, memo: document.getElementById('dep-memo').value });
             }
 
@@ -173,7 +202,7 @@
                 let end = document.getElementById('arr-city').value + document.getElementById('arr-dist').value;
                 let extras = "";
                 document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛬 接機服務\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n🧳 行利：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                finalMsg += `🛬 接機服務\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n🧳 行李：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
                 payloads.push({ timestamp: new Date().toLocaleString(), type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrDate, start: document.getElementById('arr-start').value, end: end + extras, memo: document.getElementById('arr-memo').value });
             }
 
