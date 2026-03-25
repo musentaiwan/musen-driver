@@ -10,7 +10,7 @@
         .container { max-width: 500px; margin: auto; background: #222; padding: 25px; border-radius: 15px; border: 1px solid #d4af37; box-shadow: 0 10px 40px rgba(0,0,0,0.8); box-sizing: border-box; }
         h3 { text-align: center; font-weight: 300; letter-spacing: 2px; color: #fff; margin-bottom: 20px; }
         .tab-group { display: flex; margin-bottom: 25px; gap: 10px; }
-        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; transition: 0.3s; }
+        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; transition: 0.3s; font-size: 15px; }
         .tab.active { background: #d4af37; color: #1a1a1a; font-weight: bold; }
         .form-section { display: none; }
         .form-section.active { display: block; }
@@ -18,7 +18,7 @@
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
         input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; -webkit-appearance: none; }
         .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 8px; font-size: 14px; }
-        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.6; }
     </style>
 </head>
@@ -32,47 +32,47 @@
         </div>
 
         <div id="depSection" class="form-section active">
-            <div class="form-group"><label>送機日期</label><input type="date" id="depDate"></div>
-            <div class="form-group"><label>聯絡電話</label><input type="tel" id="depPhone" placeholder="請輸入電話"></div>
-            <div class="form-group"><label>去程班機</label><input type="text" id="depFlight" placeholder="例如：BR198"></div>
-            <div class="form-group"><label>上車時間</label><input type="time" id="depTime"></div>
+            <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
+            <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入電話"></div>
+            <div class="form-group"><label>去程班機</label><input type="text" id="dep-flight" placeholder="例如：BR198"></div>
+            <div class="form-group"><label>上車時間</label><input type="time" id="dep-time"></div>
             <div class="form-group">
                 <label>上車起點</label>
                 <div style="display: flex; gap: 8px;">
-                    <select id="depCity" style="flex: 1;"></select>
-                    <input type="text" id="depDist" style="flex: 2;" placeholder="區與門牌">
+                    <select id="dep-city" style="flex: 1;"></select>
+                    <input type="text" id="dep-dist" style="flex: 2;" placeholder="行政區與門牌">
                 </div>
             </div>
             <div id="depExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
-            <div class="form-group"><label>送機終點</label><input type="text" id="depEnd" placeholder="例如：桃園機場第一航廈"></div>
-            <div class="form-group"><label>送機行李</label><input type="text" id="depLug" placeholder="行李尺寸/件數"></div>
-            <div class="form-group"><label>送機備註</label><textarea id="depMemo" rows="2"></textarea></div>
+            <div class="form-group"><label>送機終點 (目的地)</label><input type="text" id="dep-end" placeholder="例如：桃園機場第一航廈"></div>
+            <div class="form-group"><label>送機行李</label><input type="text" id="dep-lug" placeholder="行李尺寸/件數"></div>
+            <div class="form-group"><label>送機備註</label><textarea id="dep-memo" rows="2"></textarea></div>
         </div>
 
         <div id="arrSection" class="form-section">
-            <div class="form-group"><label>接機日期</label><input type="date" id="arrDate"></div>
-            <div class="form-group"><label>聯絡電話</label><input type="tel" id="arrPhone" placeholder="請輸入電話"></div>
-            <div class="form-group"><label>回程班機</label><input type="text" id="arrFlight" placeholder="例如：BR199"></div>
-            <div class="form-group"><label>落地時間</label><input type="time" id="arrTime"></div>
-            <div class="form-group"><label>接機起點</label><input type="text" id="arrStart" placeholder="例如：桃園機場第二航廈"></div>
+            <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
+            <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入電話"></div>
+            <div class="form-group"><label>回程班機</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
+            <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
+            <div class="form-group"><label>接機起點 (機場/航廈)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
             <div id="arrExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
                 <div style="display: flex; gap: 8px;">
-                    <select id="arrCity" style="flex: 1;"></select>
-                    <input type="text" id="arrDist" style="flex: 2;" placeholder="區與門牌">
+                    <select id="arr-city" style="flex: 1;"></select>
+                    <input type="text" id="arr-dist" style="flex: 2;" placeholder="行政區與門牌">
                 </div>
             </div>
-            <div class="form-group"><label>接機行李</label><input type="text" id="arrLug" placeholder="行李尺寸/件數"></div>
-            <div class="form-group"><label>接機備註</label><textarea id="arrMemo" rows="2"></textarea></div>
+            <div class="form-group"><label>接機行李</label><input type="text" id="arr-lug" placeholder="行李尺寸/件數"></div>
+            <div class="form-group"><label>接機備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
 
-        <button type="button" class="submit-btn" onclick="submitAll()">確認並送出所有預約</button>
+        <button type="button" class="submit-btn" onclick="submitAll()">確認並送出預約</button>
 
         <div class="footer-note">
-            如需包車、裝修改造、產業合作，請直接與官方對談。<br>
+            ※ 如需包車、裝修改造、產業合作，請直接與官方對談。<br>
             <strong>沐森整合企業社 敬上</strong>
         </div>
     </div>
@@ -82,19 +82,21 @@
         let userName = "賓客";
 
         async function main() {
-            await liff.init({ liffId: "2009589320-tRfh7Al6" });
-            if (liff.isLoggedIn()) {
-                const profile = await liff.getProfile();
-                userName = profile.displayName;
-                document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
-            } else { liff.login(); }
-            
-            const dSel = document.getElementById('depCity');
-            const aSel = document.getElementById('arrCity');
-            allCities.forEach(c => {
-                dSel.add(new Option(c, c));
-                aSel.add(new Option(c, c));
-            });
+            try {
+                await liff.init({ liffId: "2009589320-tRfh7Al6" });
+                if (liff.isLoggedIn()) {
+                    const profile = await liff.getProfile();
+                    userName = profile.displayName;
+                    document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
+                } else { liff.login(); }
+                
+                const dSel = document.getElementById('dep-city');
+                const aSel = document.getElementById('arr-city');
+                allCities.forEach(c => {
+                    dSel.add(new Option(c, c));
+                    aSel.add(new Option(c, c));
+                });
+            } catch (e) { console.error(e); }
         }
         main();
 
@@ -115,35 +117,39 @@
 
         async function submitAll() {
             let finalMsg = `【 沐森商務｜預約訂車需求 】\n👤 姓名：${userName}\n\n`;
-            let hasDep = document.getElementById('depDate').value !== "";
-            let hasArr = document.getElementById('arrDate').value !== "";
+            
+            // 檢查有沒有填日期來判斷該單是否有內容
+            let hasDep = document.getElementById('dep-date').value !== "";
+            let hasArr = document.getElementById('arr-date').value !== "";
 
-            if (!hasDep && !hasArr) return alert("請至少填寫一項服務（送機或接機）");
+            if (!hasDep && !hasArr) return alert("請填寫預約日期");
 
+            // 組合送機訊息
             if (hasDep) {
                 finalMsg += `🛫 --- 送機服務 ---\n`;
-                finalMsg += `📅 日期：${document.getElementById('depDate').value}\n`;
-                finalMsg += `📞 電話：${document.getElementById('depPhone').value}\n`;
-                finalMsg += `✈️ 班機：${document.getElementById('depFlight').value}\n`;
-                finalMsg += `⏰ 上車：${document.getElementById('depTime').value}\n`;
-                finalMsg += `📍 起點：${document.getElementById('depCity').value}${document.getElementById('depDist').value}\n`;
+                finalMsg += `📅 日期：${document.getElementById('dep-date').value}\n`;
+                finalMsg += `📞 電話：${document.getElementById('dep-phone').value}\n`;
+                finalMsg += `✈️ 班機：${document.getElementById('dep-flight').value}\n`;
+                finalMsg += `⏰ 上車：${document.getElementById('dep-time').value}\n`;
+                finalMsg += `📍 起點：${document.getElementById('dep-city').value}${document.getElementById('dep-dist').value}\n`;
                 document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) finalMsg += `➕ 加點${i+1}：${el.value}\n`; });
-                finalMsg += `🏁 終點：${document.getElementById('depEnd').value}\n`;
-                finalMsg += `🧳 行李：${document.getElementById('depLug').value}\n`;
-                finalMsg += `📝 備註：${document.getElementById('depMemo').value || '無'}\n\n`;
+                finalMsg += `🏁 終點：${document.getElementById('dep-end').value}\n`;
+                finalMsg += `🧳 行李：${document.getElementById('dep-lug').value}\n`;
+                finalMsg += `📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
             }
 
+            // 組合接機訊息
             if (hasArr) {
                 finalMsg += `🛬 --- 接機服務 ---\n`;
-                finalMsg += `📅 日期：${document.getElementById('arrDate').value}\n`;
-                finalMsg += `📞 電話：${document.getElementById('arrPhone').value}\n`;
-                finalMsg += `✈️ 班機：${document.getElementById('arrFlight').value}\n`;
-                finalMsg += `⏰ 落地：${document.getElementById('arrTime').value}\n`;
-                finalMsg += `📍 起點：${document.getElementById('arrStart').value}\n`;
+                finalMsg += `📅 日期：${document.getElementById('arr-date').value}\n`;
+                finalMsg += `📞 電話：${document.getElementById('arr-phone').value}\n`;
+                finalMsg += `✈️ 班機：${document.getElementById('arr-flight').value}\n`;
+                finalMsg += `⏰ 落地：${document.getElementById('arr-time').value}\n`;
+                finalMsg += `📍 起點：${document.getElementById('arr-start').value}\n`;
                 document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) finalMsg += `➕ 加點${i+1}：${el.value}\n`; });
-                finalMsg += `🏁 終點：${document.getElementById('arrCity').value}${document.getElementById('arrDist').value}\n`;
-                finalMsg += `🧳 行李：${document.getElementById('arrLug').value}\n`;
-                finalMsg += `📝 備註：${document.getElementById('arrMemo').value || '無'}\n\n`;
+                finalMsg += `🏁 終點：${document.getElementById('arr-city').value}${document.getElementById('arr-dist').value}\n`;
+                finalMsg += `🧳 行李：${document.getElementById('arr-lug').value}\n`;
+                finalMsg += `📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
             }
 
             finalMsg += `--- 沐森整合｜卓越隨行 ---`;
