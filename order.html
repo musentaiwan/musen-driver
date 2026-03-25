@@ -95,7 +95,7 @@
 
         async function main() {
             try {
-                // 使用您截圖中的新 LIFF ID
+                // 使用您最新的訂單專用 LIFF ID
                 await liff.init({ liffId: "2009589320-tRfh7Al6" }); 
                 if (!liff.isLoggedIn()) {
                     liff.login();
@@ -149,7 +149,7 @@
             orderText += `📍 上車地址：${document.getElementById('city').value}${document.getElementById('district').value}\n`;
             if(extras) orderText += `➕ 加點地址：${extras}\n`;
             orderText += `🏁 下車地址：${document.getElementById('dropoff').value}\n`;
-            orderText += `🧳 行李尺寸：${document.getElementById('luggage').value}\n`;
+            orderText += `🧳 行利尺寸：${document.getElementById('luggage').value}\n`;
             orderText += `📝 備註內容：${document.getElementById('memo').value || '無'}\n\n`;
             orderText += `--- 沐森整合｜卓越隨行 ---`;
 
@@ -162,7 +162,7 @@
                     alert('請在 LINE App 內開啟此連結以完成訂單送出。');
                 }
             } catch (error) {
-                alert('傳送失敗，請檢查 LINE 權限設定。');
+                alert('傳送失敗，請確認 Scopes 權限（chat_message.write）已勾選。');
                 console.error(error);
             }
         }
