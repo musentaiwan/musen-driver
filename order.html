@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>沐森商務｜預約訂車系統</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { background-color: #1a1a1a; color: #d4af37; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; margin: 0; padding: 15px; }
+        .container { max-width: 500px; margin: auto; background: #222; padding: 20px; border-radius: 15px; border: 1px solid #d4af37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box; }
+        h3 { text-align: center; font-weight: 300; letter-spacing: 2px; color: #fff; margin-top: 0; }
+        .tab-group { display: flex; margin-bottom: 20px; gap: 10px; }
+        .tab { flex: 1; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; cursor: pointer; color: #d4af37; font-size: 14px; }
+        .tab.active { background: #d4af37; color: #1a1a1a; font-weight: bold; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; }
+        .add-btn { background: none; border: 1px dashed #d4af37; color: #d4af37; width: 100%; padding: 10px; margin-top: 5px; cursor: pointer; border-radius: 8px; font-size: 14px; }
+        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 16px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 4px 15px rgba(212,175,55,0.3); }
+        .footer-note { font-size: 11px; color: #666; margin-top: 25px; border-top: 1px solid #333; padding-top: 15px; line-height: 1.6; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3 id="userNameDisplay">沐森禮賓 預約系統</h3>
+        
+        <div class="tab-group">
+            <div id="tabDep" class="tab active" onclick="switchTab('departure')">送機服務</div>
+            <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機服務</div>
+        </div>
+
+        <form id="orderForm">
+            <div class="form-group">
+                <label>出發日期</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label>聯絡電話</label>
+                <input type="tel" id="phone" placeholder="請輸入連絡電話" required>
+            </div>
+            <div class="form-group">
+                <label id="flightLabel">去程 班機號碼</label>
+                <input type="text" id="flightNum" placeholder="例如：BR198" required>
+            </div>
+            <div class="form-group">
+                <label id="timeLabel">上車時間 (建議起飛前3小時)</label>
+                <input type="time" id="time" required>
+            </div>
+
+            <div class="form-group">
+                <label>上車地址</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                    <select id="city" style="flex: 1;">
+                        <option value="基隆市">基隆市</option>
+                        <option value="台北市">台北市</option>
+                        <option value="新北市">新北市</option>
+                        <option value="桃園市">桃園市</option>
+                        <option value="新竹市">新竹市</option>
+                    </select>
+                    <input type="text" id="district" style="flex: 2;" placeholder="行政區與街道門牌" required>
+                </div>
+            </div>
+
+            <div id="extraAddressGroup"></div>
+            <button type="button" class="add-btn" onclick="addAddress()">＋ 新增加點地址</button>
+
+            <div class="form-group" style="margin-top:15px;">
+                <label>下車地址 (目的地)</label>
+                <input type="text" id="dropoff" placeholder="例如：桃園機場第一航廈" required>
+            </div>
+
+            <div class="form-group">
+                <label>行李尺寸與件數</label>
+                <input type="text" id="luggage" placeholder="例如：28吋x2, 20吋x1" required>
+            </div>
+
+            <div class="form-group">
+                <label>備註 (如：兒童座椅、特殊需求)</label>
+                <textarea id="memo" rows="2" placeholder="如有兒童座椅需求請在此註明"></textarea>
+            </div>
+
+            <button type="button" class="submit-btn" onclick="submitOrder()">確認預約，送出需求</button>
+        </form>
+
+        <div class="footer-note">
+            ※ 如需包車、裝修改造、產業合作，請直接與官方對談。<br>
+            沐森整合企業社 敬上
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'departure';
+        let userName = "";
+
+        async function main() {
+            try {
+                await liff.init({ liffId: "2009589320-tRfh7Al6" }); // 已更新為您的新 ID
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    userName = profile.displayName;
+                    document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
+                }
+            } catch (err) {
+                console.error("LIFF 初始化失敗", err);
+            }
+        }
+        main();
+
+        function switchTab(mode) {
+            currentMode = mode;
+            document.getElementById('tabDep').classList.toggle('active', mode === 'departure');
+            document.getElementById('tabArr').classList.toggle('active', mode === 'arrival');
+            document.getElementById('flightLabel').innerText = mode === 'departure' ? '去程 班機號碼' : '回程 班機號碼';
+            document.getElementById('timeLabel').innerText = mode === 'departure' ? '上車時間 (建議起飛前3小時)' : '落地時間';
+        }
+
+        function addAddress() {
+            const container = document.getElementById('extraAddressGroup');
+            const div = document.createElement('div');
+            div.style.marginBottom = "5px";
+            div.innerHTML = `<input type="text" class="extra-addr" placeholder="加點地址" style="background:#2a2a2a; border:1px solid #555;">`;
+            container.appendChild(div);
+        }
+
+        async function submitOrder() {
+            if (!document.getElementById('date').value || !document.getElementById('phone').value) {
+                alert('請填寫日期與電話');
+                return;
+            }
+
+            let extras = Array.from(document.querySelectorAll('.extra-addr')).map(i => i.value).filter(v => v).join(' / ');
+            let orderText = `【 沐森商務｜預約訂車需求 】\n\n`;
+            orderText += `服務類型：${currentMode === 'departure' ? '送機 🛫' : '接機 🛬'}\n`;
+            orderText += `貴賓姓名：${userName}\n`;
+            orderText += `出發日期：${document.getElementById('date').value}\n`;
+            orderText += `聯絡電話：${document.getElementById('phone').value}\n`;
+            orderText += `班機號碼：${document.getElementById('flightNum').value}\n`;
+            orderText += `${currentMode === 'departure' ? '上車時間' : '落地時間'}：${document.getElementById('time').value}\n`;
+            orderText += `上車地址：${document.getElementById('city').value}${document.getElementById('district').value}\n`;
+            if(extras) orderText += `加點地址：${extras}\n`;
+            orderText += `下車地址：${document.getElementById('dropoff').value}\n`;
+            orderText += `行李尺寸：${document.getElementById('luggage').value}\n`;
+            orderText += `備註內容：${document.getElementById('memo').value || '無'}\n\n`;
+            orderText += `--- 沐森整合｜卓越隨行 ---`;
+
+            if (liff.isInClient()) {
+                await liff.sendMessages([{ type: 'text', text: orderText }]);
+                alert('您的訂單需求已成功送出！');
+                liff.closeWindow();
+            } else {
+                alert('請在 LINE 內開啟本頁面');
+            }
+        }
+    </script>
+</body>
+</html>
