@@ -27,6 +27,8 @@
         .address-row select { flex: 1; min-width: 0; }
         .address-row input { flex: 2; min-width: 0; }
 
+        .add-btn { background: transparent; color: #d4af37; border: 1px dashed #d4af37; padding: 10px; width: 100%; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-size: 14px; }
+
         .checkbox-container {
             display: flex; align-items: center; margin-top: 10px; padding: 12px; background: #2a2a2a; 
             border-radius: 8px; cursor: pointer; border: 1px solid #444; width: 100%; box-sizing: border-box;
@@ -34,7 +36,6 @@
         input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; accent-color: #d4af37; -webkit-appearance: checkbox; }
         .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; flex: 1; }
 
-        /* 公約區塊樣式 */
         .policy-box {
             margin-top: 25px; padding: 15px; background: #2d2d2d; border-radius: 10px; border: 1px solid #444; font-size: 13px; color: #ccc; line-height: 1.6;
         }
@@ -54,6 +55,7 @@
             <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機填寫</div>
         </div>
 
+        <!-- 送機區塊 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入聯絡電話"></div>
@@ -70,19 +72,23 @@
                     <span class="checkbox-label">下次繼續使用這個上車地址</span>
                 </div>
             </div>
-            <div id="depExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
+            <div id="depExtraGroup"></div>
+            <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="例如：桃園機場第一航廈"></div>
+            <div class="form-group"><label>乘車人數</label><input type="number" id="dep-pax" placeholder="例如：3" min="1"></div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="dep-lug" placeholder="例如：28吋x2"></div>
             <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2"></textarea></div>
         </div>
 
+        <!-- 接機區塊 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話"></div>
             <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
             <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
-            <div id="arrExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
+            <div id="arrExtraGroup"></div>
+            <button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
                 <div class="address-row">
@@ -94,6 +100,7 @@
                     <span class="checkbox-label">下次繼續使用這個下車地址</span>
                 </div>
             </div>
+            <div class="form-group"><label>乘車人數</label><input type="number" id="arr-pax" placeholder="例如：3" min="1"></div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="arr-lug" placeholder="例如：28吋x2"></div>
             <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
@@ -215,24 +222,27 @@
                 let start = document.getElementById('dep-city').value + document.getElementById('dep-dist').value;
                 let extras = "";
                 document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛫 送機服務\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n🧳 行李：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
-                payloads.push({ timestamp: new Date().toLocaleString(), type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depDate, start: start + extras, end: document.getElementById('dep-end').value, memo: document.getElementById('dep-memo').value });
+                finalMsg += `🛫 送機服務\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${document.getElementById('dep-pax').value} 人\n🧳 行李：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                payloads.push({ timestamp: new Date().toLocaleString(), type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depDate, start: start + extras, end: document.getElementById('dep-end').value, pax: document.getElementById('dep-pax').value, lug: document.getElementById('dep-lug').value, memo: document.getElementById('dep-memo').value });
             }
 
             if (arrDate) {
                 let end = document.getElementById('arr-city').value + document.getElementById('arr-dist').value;
                 let extras = "";
                 document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛬 接機服務\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n🧳 行李：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
-                payloads.push({ timestamp: new Date().toLocaleString(), type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrDate, start: document.getElementById('arr-start').value, end: end + extras, memo: document.getElementById('arr-memo').value });
+                finalMsg += `🛬 接機服務\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n👥 人數：${document.getElementById('arr-pax').value} 人\n🧳 行李：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                payloads.push({ timestamp: new Date().toLocaleString(), type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrDate, start: document.getElementById('arr-start').value, end: end + extras, pax: document.getElementById('arr-pax').value, lug: document.getElementById('arr-lug').value, memo: document.getElementById('arr-memo').value });
             }
 
+            // 送出到 Google Sheets (GAS)
             payloads.forEach(data => { fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); });
 
             if (liff.isInClient()) {
                 await liff.sendMessages([{ type: 'text', text: finalMsg }]);
                 liff.closeWindow();
-            } else { alert("請在 LINE 內送出"); }
+            } else { 
+                alert("預約資料已準備好，請在 LINE 內開啟此頁面以送出訊息。\n\n" + finalMsg); 
+            }
         }
     </script>
 </body>
