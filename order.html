@@ -28,9 +28,12 @@
         input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; accent-color: #d4af37; -webkit-appearance: checkbox; }
         .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; flex: 1; }
         .section-title { font-size: 14px; color: #d4af37; margin: 15px 0 10px 0; border-left: 3px solid #d4af37; padding-left: 8px; }
-        .seat-item { display: flex; gap: 8px; margin-bottom: 10px; }
         .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
+        /* 座椅專用樣式加強視覺 */
+        .seat-item { display: flex; gap: 8px; margin-bottom: 10px; }
+        .seat-type { flex: 2; background: #444 !important; border: 1px solid #d4af37 !important; }
+        .seat-qty { flex: 1; display: none; background: #555 !important; border: 1px solid #d4af37 !important; color: #fff !important; }
     </style>
 </head>
 <body>
@@ -62,13 +65,10 @@
             <div id="depExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="例如：桃園機場第一航廈"></div>
-            
-            <div class="section-title">乘車人數 (總計不超過 8 人)</div>
             <div class="row-group">
                 <div class="form-group"><label>大人</label><select id="dep-adult" onchange="checkPaxLimit('dep')"></select></div>
                 <div class="form-group"><label>小孩</label><select id="dep-child" onchange="checkPaxLimit('dep')"></select></div>
             </div>
-
             <div class="section-title">行李規格 (超載將自動警示)</div>
             <div class="row-group">
                 <div class="form-group"><label>手提</label><select class="lug-sel" id="dep-lug-hand" onchange="checkAllLuggage('dep')"></select></div>
@@ -79,8 +79,9 @@
                 <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="dep-lug-28" onchange="checkAllLuggage('dep')"></select></div>
             </div>
             <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="dep-lug-fat" onchange="checkAllLuggage('dep')"></select></div>
-
-            <div class="section-title">兒童座椅需求</div><div id="depSeatGroup"></div><button type="button" class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
+            <div class="section-title">兒童座椅需求</div>
+            <div id="depSeatGroup"></div>
+            <button type="button" class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2"></textarea></div>
         </div>
 
@@ -91,7 +92,8 @@
             <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
             <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
-            <div id="arrExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
+            <div id="arrExtraGroup"></div>
+            <button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
                 <div class="address-row">
@@ -104,13 +106,10 @@
                     <span class="checkbox-label">下次繼續使用地址與電話</span>
                 </div>
             </div>
-            
-            <div class="section-title">乘車人數 (總計不超過 8 人)</div>
             <div class="row-group">
                 <div class="form-group"><label>大人</label><select id="arr-adult" onchange="checkPaxLimit('arr')"></select></div>
                 <div class="form-group"><label>小孩</label><select id="arr-child" onchange="checkPaxLimit('arr')"></select></div>
             </div>
-
             <div class="section-title">行李規格 (超載將自動警示)</div>
             <div class="row-group">
                 <div class="form-group"><label>手提</label><select class="lug-sel" id="arr-lug-hand" onchange="checkAllLuggage('arr')"></select></div>
@@ -121,8 +120,9 @@
                 <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="arr-lug-28" onchange="checkAllLuggage('arr')"></select></div>
             </div>
             <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="arr-lug-fat" onchange="checkAllLuggage('arr')"></select></div>
-
-            <div class="section-title">兒童座椅需求</div><div id="arrSeatGroup"></div><button type="button" class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
+            <div class="section-title">兒童座椅需求</div>
+            <div id="arrSeatGroup"></div>
+            <button type="button" class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
 
@@ -132,7 +132,6 @@
 
     <script>
         const gasUrl = "https://script.google.com/macros/s/AKfycbwERHuFqQJTcBPaP2nC6tIObU9pvZ18IXblaKBLJHXU2wr--Y0JkswwEyalpVLfhQ1wbQ/exec";
-        
         const twData = {
             "台北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"],
             "新北市": ["板橋區", "三重區", "中和區", "永和區", "新莊區", "新店區", "土城區", "蘆洲區", "樹林區", "汐止區", "三峽區", "淡水區", "鶯歌區", "五股區", "泰山區", "林口區", "深坑區", "石碇區", "坪林區", "三芝區", "石門區", "八里區", "平溪區", "雙溪區", "貢寮區", "金山區", "萬里區", "烏來區", "瑞芳區"],
@@ -169,17 +168,15 @@
         }
         main();
 
-        // 人數限制檢查 (不超過 8 人)
         function checkPaxLimit(type) {
             const adult = parseInt(document.getElementById(`${type}-adult`).value) || 0;
             const child = parseInt(document.getElementById(`${type}-child`).value) || 0;
             if (adult + child > 8) {
-                alert("⚠️ 人數超出限制\n\n九人座車輛(扣除司機)最多僅能承載 8 位乘客。\n請重新調整人數。");
+                alert("⚠️ 人數超出限制\n九人座車輛扣除司機最多載 8 位。");
                 document.getElementById(`${type}-child`).value = "0";
             }
         }
 
-        // 行李體積防呆
         function checkAllLuggage(type) {
             const fat = parseInt(document.getElementById(`${type}-lug-fat`).value) || 0;
             const lug28 = parseInt(document.getElementById(`${type}-lug-28`).value) || 0;
@@ -187,12 +184,10 @@
             const lug20 = parseInt(document.getElementById(`${type}-lug-20`).value) || 0;
             const hand = parseInt(document.getElementById(`${type}-lug-hand`).value) || 0;
             let score = (fat*2.0) + (lug28*1.5) + (lug24*1.0) + (lug20*0.5) + (hand*0.3);
-            const fatOver = ((fat>=5 && lug28>=3) || (fat>=5 && lug24>=4) || (fat>=4 && lug28>=4) || (fat>=4 && lug24>=5) || (fat>=3 && lug28>=5) || (fat>=3 && lug24>=6));
-            if (fatOver || score > 10.5) {
-                alert("⚠️ 行李超載警告\n\n行李體積已嚴重超出車輛空間，請減輕數量。");
+            if (score > 10.5) {
+                alert("⚠️ 行李超載警告\n行李體積已超過單車上限。");
                 document.getElementById(`${type}-lug-fat`).value = "0";
                 document.getElementById(`${type}-lug-28`).value = "0";
-                document.getElementById(`${type}-lug-24`).value = "0";
             }
         }
 
@@ -218,9 +213,9 @@
 
         function addSeat(type) {
             const group = document.getElementById(type + 'SeatGroup');
-            if(group.children.length >= 5) return alert("最多 5 項需求");
+            if(group.children.length >= 5) return alert("最多 5 項");
             const div = document.createElement('div'); div.className = "seat-item";
-            div.innerHTML = `<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty'); qs.style.display=(this.value!=='')?'block':'none';"><option value="">種類</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option></select><select class="seat-qty" style="flex:1; display:none;"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select>`;
+            div.innerHTML = `<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty'); qs.style.display=(this.value!=='')?'block':'none';"><option value="">座椅種類</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option></select><select class="seat-qty"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select>`;
             group.appendChild(div);
         }
 
@@ -236,7 +231,7 @@
             ['dep', 'arr'].forEach(t => {
                 if (localStorage.getItem(`${t}_cb`) === 'true') {
                     document.getElementById(`save-${t}`).checked = true;
-                    if (localStorage.getItem('musen_phone')) { syncPhone(localStorage.getItem('musen_phone')); }
+                    if (localStorage.getItem('musen_phone')) syncPhone(localStorage.getItem('musen_phone'));
                     if(localStorage.getItem(`${t}_city`)) {
                         document.getElementById(`${t}-city`).value = localStorage.getItem(`${t}_city`); updateDistricts(t);
                         document.getElementById(`${t}-dist`).value = localStorage.getItem(`${t}_dist`);
@@ -278,17 +273,18 @@
         async function submitAll() {
             const depD = document.getElementById('dep-date').value; const arrD = document.getElementById('arr-date').value;
             if (!depD && !arrD) return alert("請選擇日期");
-            if (depD && (parseInt(document.getElementById('dep-adult').value) + parseInt(document.getElementById('dep-child').value) > 8)) return alert("人數超過 8 人，請修改。");
-            if (arrD && (parseInt(document.getElementById('arr-adult').value) + parseInt(document.getElementById('arr-child').value) > 8)) return alert("人數超過 8 人，請修改。");
-
-            localStorage.setItem('musen_phone', document.getElementById('dep-phone').value);
+            
+            // 儲存邏輯
+            if (document.getElementById('save-dep').checked || document.getElementById('save-arr').checked) {
+                localStorage.setItem('musen_phone', document.getElementById('dep-phone').value);
+            }
             ['dep', 'arr'].forEach(t => {
                 const cb = document.getElementById(`save-${t}`).checked; localStorage.setItem(`${t}_cb`, cb);
                 if(cb) {
                     localStorage.setItem(`${t}_city`, document.getElementById(`${t}-city`).value);
                     localStorage.setItem(`${t}_dist`, document.getElementById(`${t}-dist`).value);
                     localStorage.setItem(`${t}_detail`, document.getElementById(`${t}-detail`).value);
-                } else { localStorage.removeItem(`${t}_city`); }
+                }
             });
 
             let finalMsg = `【 沐森商務｜預約需求 】\n👤 姓名：${userName}\n\n`;
@@ -296,19 +292,19 @@
 
             if (depD) {
                 let addr = document.getElementById('dep-city').value + document.getElementById('dep-dist').value + document.getElementById('dep-detail').value;
-                let ex = ""; document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) ex += ` 加點:${el.value}`; });
+                let ex = ""; document.querySelectorAll('.dep-extra').forEach((el) => { if(el.value) ex += ` 加點:${el.value}`; });
                 let p = `${document.getElementById('dep-adult').value}大 ${document.getElementById('dep-child').value}小`;
-                let lug = getLuggageInfo('dep'); let seat = getSeatInfo('dep');
-                finalMsg += `🛫 送機\n📅 日期：${depD}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${addr}${ex}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${p}\n🧳 行李：${lug}\n👶 座椅：${seat}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
-                payloads.push({ type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depD, time: document.getElementById('dep-time').value, start: addr + ex, end: document.getElementById('dep-end').value, pax: p, luggage: lug, seat: seat, memo: document.getElementById('dep-memo').value });
+                let time = document.getElementById('dep-time').value;
+                finalMsg += `🛫 送機\n📅 日期：${depD}\n⏰ 上車：${time}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n📍 起點：${addr}${ex}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${p}\n🧳 行李：${getLuggageInfo('dep')}\n👶 座椅：${getSeatInfo('dep')}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                payloads.push({ type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depD, time: time, start: addr + ex, end: document.getElementById('dep-end').value, pax: p, luggage: getLuggageInfo('dep'), seat: getSeatInfo('dep'), memo: document.getElementById('dep-memo').value });
             }
             if (arrD) {
                 let addr = document.getElementById('arr-city').value + document.getElementById('arr-dist').value + document.getElementById('arr-detail').value;
-                let ex = ""; document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) ex += ` 加點:${el.value}`; });
+                let ex = ""; document.querySelectorAll('.arr-extra').forEach((el) => { if(el.value) ex += ` 加點:${el.value}`; });
                 let p = `${document.getElementById('arr-adult').value}大 ${document.getElementById('arr-child').value}小`;
-                let lug = getLuggageInfo('arr'); let seat = getSeatInfo('arr');
-                finalMsg += `🛬 接機\n📅 日期：${arrD}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}${ex}\n👥 人數：${p}\n🧳 行李：${lug}\n👶 座椅：${seat}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
-                payloads.push({ type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrD, time: document.getElementById('arr-time').value, start: document.getElementById('arr-start').value, end: addr + ex, pax: p, luggage: lug, seat: seat, memo: document.getElementById('arr-memo').value });
+                let time = document.getElementById('arr-time').value;
+                finalMsg += `🛬 接機\n📅 日期：${arrD}\n⏰ 落地：${time}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}${ex}\n👥 人數：${p}\n🧳 行李：${getLuggageInfo('arr')}\n👶 座椅：${getSeatInfo('arr')}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                payloads.push({ type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrD, time: time, start: document.getElementById('arr-start').value, end: addr + ex, pax: p, luggage: getLuggageInfo('arr'), seat: getSeatInfo('arr'), memo: document.getElementById('arr-memo').value });
             }
 
             payloads.forEach(data => { fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); });
