@@ -18,8 +18,8 @@
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
         input, select, textarea { width: 100%; height: 48px; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none; }
         textarea { height: auto; min-height: 80px; }
-        .row-group { display: flex; gap: 10px; }
-        .row-group .form-group { flex: 1; }
+        .row-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .row-group .form-group { flex: 1; margin-bottom: 0; }
         .address-row { display: flex; gap: 8px; margin-bottom: 8px; }
         .address-row select { flex: 1; }
         .full-address { margin-top: 5px; }
@@ -32,6 +32,7 @@
         .policy-content { height: 140px; overflow-y: scroll; padding-right: 5px; }
         .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
+        .luggage-title { font-size: 14px; color: #d4af37; margin: 15px 0 10px 0; border-left: 3px solid #d4af37; padding-left: 8px; }
     </style>
 </head>
 <body>
@@ -57,18 +58,30 @@
                 <input type="text" id="dep-detail" class="full-address" placeholder="門牌地址（如：忠孝東路四段1號）">
                 <div class="checkbox-container" onclick="toggleCB('save-dep')">
                     <input type="checkbox" id="save-dep" onclick="event.stopPropagation()">
-                    <span class="checkbox-label">下次繼續使用這個地址與電話</span>
+                    <span class="checkbox-label">下次繼續使用地址與電話</span>
                 </div>
             </div>
             <div id="depExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="例如：桃園機場第一航廈"></div>
+            
             <div class="row-group">
                 <div class="form-group"><label>大人</label><select id="dep-adult"></select></div>
                 <div class="form-group"><label>小孩</label><select id="dep-child"></select></div>
             </div>
-            <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="dep-lug" placeholder="例如：28吋x2"></div>
-            <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2"></textarea></div>
+
+            <div class="luggage-title">行李規格需求</div>
+            <div class="row-group">
+                <div class="form-group"><label>手提行李</label><select class="lug-sel" id="dep-lug-hand"></select></div>
+                <div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="dep-lug-20"></select></div>
+            </div>
+            <div class="row-group">
+                <div class="form-group"><label>24-26吋</label><select class="lug-sel" id="dep-lug-24"></select></div>
+                <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="dep-lug-28"></select></div>
+            </div>
+            <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="dep-lug-fat"></select></div>
+
+            <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2" placeholder="是否有特殊物品？"></textarea></div>
         </div>
 
         <!-- 接機 -->
@@ -89,15 +102,27 @@
                 <input type="text" id="arr-detail" class="full-address" placeholder="門牌地址（如：忠孝西路一段1號）">
                 <div class="checkbox-container" onclick="toggleCB('save-arr')">
                     <input type="checkbox" id="save-arr" onclick="event.stopPropagation()">
-                    <span class="checkbox-label">下次繼續使用這個地址與電話</span>
+                    <span class="checkbox-label">下次繼續使用地址與電話</span>
                 </div>
             </div>
+            
             <div class="row-group">
                 <div class="form-group"><label>大人</label><select id="arr-adult"></select></div>
                 <div class="form-group"><label>小孩</label><select id="arr-child"></select></div>
             </div>
-            <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="arr-lug" placeholder="例如：28吋x2"></div>
-            <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
+
+            <div class="luggage-title">行李規格需求</div>
+            <div class="row-group">
+                <div class="form-group"><label>手提行李</label><select class="lug-sel" id="arr-lug-hand"></select></div>
+                <div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="arr-lug-20"></select></div>
+            </div>
+            <div class="row-group">
+                <div class="form-group"><label>24-26吋</label><select class="lug-sel" id="arr-lug-24"></select></div>
+                <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="arr-lug-28"></select></div>
+            </div>
+            <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="arr-lug-fat"></select></div>
+
+            <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2" placeholder="是否有特殊物品？"></textarea></div>
         </div>
 
         <div class="policy-box">
@@ -106,7 +131,7 @@
                 1. <strong>用車 48 小時前</strong>取消：全額退費。<br>
                 2. <strong>用車 24-48 小時內</strong>取消：扣除 50% 車資。<br>
                 3. <strong>用車 24 小時內或當日</strong>取消：不予退費。<br>
-                4. 如遇不可抗力之因素，請提供證明，我們將協助改派。<br>
+                4. 如遇航班取消、天災，請提供證明，我們將協助改派。<br>
                 5. 司機抵達後等候 30 分鐘且聯繫不上，不予退費。
             </div>
             <div class="checkbox-container" onclick="toggleCB('agree-policy')" style="margin-top: 10px; border: 1px solid #d4af37;">
@@ -122,7 +147,6 @@
     <script>
         const gasUrl = "https://script.google.com/macros/s/AKfycbwERHuFqQJTcBPaP2nC6tIObU9pvZ18IXblaKBLJHXU2wr--Y0JkswwEyalpVLfhQ1wbQ/exec";
         
-        // 完整全台行政區資料
         const twData = {
             "台北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"],
             "新北市": ["板橋區", "三重區", "中和區", "永和區", "新莊區", "新店區", "土城區", "蘆洲區", "樹林區", "汐止區", "三峽區", "淡水區", "鶯歌區", "五股區", "泰山區", "林口區", "深坑區", "石碇區", "坪林區", "三芝區", "石門區", "八里區", "平溪區", "雙溪區", "貢寮區", "金山區", "萬里區", "烏來區", "瑞芳區"],
@@ -157,9 +181,9 @@
                 userName = profile.displayName;
                 document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
             } else { liff.login(); }
-            
             initCityDropdowns();
             initPaxDropdowns();
+            initLugDropdowns();
             loadStorage();
         }
         main();
@@ -179,9 +203,15 @@
             ids.forEach(id => {
                 const sel = document.getElementById(id);
                 const start = (id.includes('adult')) ? 1 : 0;
-                for(let i=start; i<=8; i++) {
-                    sel.add(new Option(`${i}位`, i));
-                }
+                for(let i=start; i<=8; i++) sel.add(new Option(`${i}位`, i));
+            });
+        }
+
+        function initLugDropdowns() {
+            const lugSels = document.querySelectorAll('.lug-sel');
+            lugSels.forEach(sel => {
+                const max = sel.id.includes('fat') ? 5 : 8;
+                for(let i=0; i<=max; i++) sel.add(new Option(`${i}件`, i));
             });
         }
 
@@ -230,6 +260,21 @@
             group.appendChild(div);
         }
 
+        function getLuggageInfo(type) {
+            const hand = document.getElementById(`${type}-lug-hand`).value;
+            const lug20 = document.getElementById(`${type}-lug-20`).value;
+            const lug24 = document.getElementById(`${type}-lug-24`).value;
+            const lug28 = document.getElementById(`${type}-lug-28`).value;
+            const lugFat = document.getElementById(`${type}-lug-fat`).value;
+            let res = [];
+            if(hand > 0) res.push(`手提x${hand}`);
+            if(lug20 > 0) res.push(`20吋x${lug20}`);
+            if(lug24 > 0) res.push(`24-26吋x${lug24}`);
+            if(lug28 > 0) res.push(`28-30吋x${lug28}`);
+            if(lugFat > 0) res.push(`胖胖箱x${lugFat}`);
+            return res.length > 0 ? res.join(', ') : "無行李";
+        }
+
         async function submitAll() {
             if (!document.getElementById('agree-policy').checked) return alert("請先同意「取消退款公約」。");
             const depDate = document.getElementById('dep-date').value;
@@ -254,16 +299,18 @@
                 let addr = document.getElementById('dep-city').value + document.getElementById('dep-dist').value + document.getElementById('dep-detail').value;
                 let extras = ""; document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
                 let pax = `${document.getElementById('dep-adult').value}大 ${document.getElementById('dep-child').value}小`;
-                finalMsg += `🛫 送機\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${addr}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${pax}\n🧳 行李：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
-                payloads.push({ type: "送機", userName: userName, date: depDate, start: addr + extras, pax: pax });
+                let lug = getLuggageInfo('dep');
+                finalMsg += `🛫 送機\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${addr}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${pax}\n🧳 行李：${lug}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                payloads.push({ type: "送機", userName: userName, date: depDate, start: addr + extras, pax: pax, luggage: lug });
             }
 
             if (arrDate) {
                 let addr = document.getElementById('arr-city').value + document.getElementById('arr-dist').value + document.getElementById('arr-detail').value;
                 let extras = ""; document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
                 let pax = `${document.getElementById('arr-adult').value}大 ${document.getElementById('arr-child').value}小`;
-                finalMsg += `🛬 接機\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}\n👥 人數：${pax}\n🧳 行李：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
-                payloads.push({ type: "接機", userName: userName, date: arrDate, end: addr + extras, pax: pax });
+                let lug = getLuggageInfo('arr');
+                finalMsg += `🛬 接機\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}\n👥 人數：${pax}\n🧳 行李：${lug}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                payloads.push({ type: "接機", userName: userName, date: arrDate, end: addr + extras, pax: pax, luggage: lug });
             }
 
             payloads.forEach(data => { fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); });
