@@ -43,7 +43,6 @@
             <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機填寫</div>
         </div>
 
-        <!-- 送機區塊 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
@@ -64,38 +63,22 @@
             <div id="depExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="桃園機場航廈"></div>
-            
-            <div class="row-group">
-                <div class="form-group"><label>大人</label><select id="dep-adult"></select></div>
-                <div class="form-group"><label>小孩</label><select id="dep-child"></select></div>
-            </div>
-
+            <div class="row-group"><div class="form-group"><label>大人</label><select id="dep-adult"></select></div><div class="form-group"><label>小孩</label><select id="dep-child"></select></div></div>
             <div class="section-title">行李規格需求</div>
-            <div class="row-group">
-                <div class="form-group"><label>手提行李</label><select class="lug-sel" id="dep-lug-hand" onchange="checkOverload('dep')"></select></div>
-                <div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="dep-lug-20" onchange="checkOverload('dep')"></select></div>
-            </div>
-            <div class="row-group">
-                <div class="form-group"><label>24-26吋</label><select class="lug-sel" id="dep-lug-24" onchange="checkOverload('dep')"></select></div>
-                <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="dep-lug-28" onchange="checkOverload('dep')"></select></div>
-            </div>
+            <div class="row-group"><div class="form-group"><label>手提行李</label><select class="lug-sel" id="dep-lug-hand" onchange="checkOverload('dep')"></select></div><div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="dep-lug-20" onchange="checkOverload('dep')"></select></div></div>
+            <div class="row-group"><div class="form-group"><label>24-26吋</label><select class="lug-sel" id="dep-lug-24" onchange="checkOverload('dep')"></select></div><div class="form-group"><label>28-30吋</label><select class="lug-sel" id="dep-lug-28" onchange="checkOverload('dep')"></select></div></div>
             <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="dep-lug-fat" onchange="checkOverload('dep')"></select></div>
-
-            <div class="section-title">兒童座椅需求</div>
-            <div id="depSeatGroup"></div>
-            <button type="button" class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
+            <div class="section-title">兒童座椅需求</div><div id="depSeatGroup"></div><button type="button" class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2"></textarea></div>
         </div>
 
-        <!-- 接機區塊 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
             <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
             <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="桃園機場航廈"></div>
-            <div id="arrExtraGroup"></div>
-            <button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
+            <div id="arrExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
                 <div class="address-row">
@@ -108,26 +91,12 @@
                     <span class="checkbox-label">下次繼續使用地址與電話</span>
                 </div>
             </div>
-            
-            <div class="row-group">
-                <div class="form-group"><label>大人</label><select id="arr-adult"></select></div>
-                <div class="form-group"><label>小孩</label><select id="arr-child"></select></div>
-            </div>
-
+            <div class="row-group"><div class="form-group"><label>大人</label><select id="arr-adult"></select></div><div class="form-group"><label>小孩</label><select id="arr-child"></select></div></div>
             <div class="section-title">行李規格需求</div>
-            <div class="row-group">
-                <div class="form-group"><label>手提行李</label><select class="lug-sel" id="arr-lug-hand" onchange="checkOverload('arr')"></select></div>
-                <div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="arr-lug-20" onchange="checkOverload('arr')"></select></div>
-            </div>
-            <div class="row-group">
-                <div class="form-group"><label>24-26吋</label><select class="lug-sel" id="arr-lug-24" onchange="checkOverload('arr')"></select></div>
-                <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="arr-lug-28" onchange="checkOverload('arr')"></select></div>
-            </div>
+            <div class="row-group"><div class="form-group"><label>手提行李</label><select class="lug-sel" id="arr-lug-hand" onchange="checkOverload('arr')"></select></div><div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="arr-lug-20" onchange="checkOverload('arr')"></select></div></div>
+            <div class="row-group"><div class="form-group"><label>24-26吋</label><select class="lug-sel" id="arr-lug-24" onchange="checkOverload('arr')"></select></div><div class="form-group"><label>28-30吋</label><select class="lug-sel" id="arr-lug-28" onchange="checkOverload('arr')"></select></div></div>
             <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="arr-lug-fat" onchange="checkOverload('arr')"></select></div>
-
-            <div class="section-title">兒童座椅需求</div>
-            <div id="arrSeatGroup"></div>
-            <button type="button" class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
+            <div class="section-title">兒童座椅需求</div><div id="arrSeatGroup"></div><button type="button" class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
 
@@ -136,24 +105,25 @@
     </div>
 
     <script>
+        // --- 務必保留此 URL ---
         const gasUrl = "https://script.google.com/macros/s/AKfycbwERHuFqQJTcBPaP2nC6tIObU9pvZ18IXblaKBLJHXU2wr--Y0JkswwEyalpVLfhQ1wbQ/exec";
         
         const twData = {
+            "基隆市": ["仁愛區", "信義區", "中正區", "中山區", "安樂區", "暖暖區", "七堵區"],
             "台北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"],
             "新北市": ["板橋區", "三重區", "中和區", "永和區", "新莊區", "新店區", "土城區", "蘆洲區", "樹林區", "汐止區", "三峽區", "淡水區", "鶯歌區", "五股區", "泰山區", "林口區", "深坑區", "石碇區", "坪林區", "三芝區", "石門區", "八里區", "平溪區", "雙溪區", "貢寮區", "金山區", "萬里區", "烏來區", "瑞芳區"],
             "桃園市": ["桃園區", "中壢區", "大溪區", "楊梅區", "蘆竹區", "大園區", "龜山區", "八德區", "龍潭區", "平鎮區", "新屋區", "觀音區", "復興區"],
-            "台中市": ["中區", "東區", "南區", "西區", "北區", "北屯區", "西屯區", "南屯區", "太平區", "大里區", "霧峰區", "烏日區", "豐原區", "后里區", "石岡區", "東勢區", "和平區", "新社區", "潭子區", "大雅區", "神岡區", "大肚區", "沙鹿區", "龍井區", "梧棲區", "清水區", "大甲區", "外埔區", "大安區"],
-            "台南市": ["中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區", "新化區", "左鎮區", "玉井區", "楠西區", "南化區", "仁德區", "關廟區", "龍崎區", "官田區", "麻豆區", "佳里區", "西港區", "七股區", "將軍區", "學甲區", "北門區", "新營區", "後壁區", "白河區", "東山區", "六甲區", "下營區", "柳營區", "鹽水區", "善化區", "大內區", "山上區", "新市區", "安定區"],
-            "高雄市": ["新興區", "前金區", "苓雅區", "鹽埕區", "鼓山區", "旗津區", "前鎮區", "三民區", "楠梓區", "小港區", "左營區", "仁武區", "大社區", "岡山區", "路竹區", "阿蓮區", "田寮區", "燕巢區", "橋頭區", "梓官區", "彌陀區", "永安區", "湖內區", "鳳山區", "大寮區", "林園區", "鳥松區", "大樹區", "旗山區", "美濃區", "內門區", "杉林區", "甲仙區", "六龜區", "茂林區", "桃源區", "那瑪夏區"],
-            "基隆市": ["仁愛區", "信義區", "中正區", "中山區", "安樂區", "暖暖區", "七堵區"],
             "新竹市": ["東區", "北區", "香山區"],
             "新竹縣": ["竹北市", "湖口鄉", "新豐鄉", "新埔鎮", "關西鎮", "芎林鄉", "寶山鄉", "竹東鎮", "五峰鄉", "橫山鄉", "尖石鄉", "北埔鄉", "峨眉鄉"],
             "苗栗縣": ["苗栗市", "頭份市", "竹南鎮", "後龍鎮", "通霄鎮", "苑裡鎮", "卓蘭鎮", "造橋鄉", "西湖鄉", "頭屋鄉", "公館鄉", "銅鑼鄉", "三義鄉", "大湖鄉", "獅潭鄉", "三灣鄉", "南庄鄉", "泰安鄉"],
+            "台中市": ["中區", "東區", "南區", "西區", "北區", "北屯區", "西屯區", "南屯區", "太平區", "大里區", "霧峰區", "烏日區", "豐原區", "后里區", "石岡區", "東勢區", "和平區", "新社區", "潭子區", "大雅區", "神岡區", "大肚區", "沙鹿區", "龍井區", "梧棲區", "清水區", "大甲區", "外埔區", "大安區"],
             "彰化縣": ["彰化市", "鹿港鎮", "和美鎮", "線西鄉", "伸港鄉", "福興鄉", "秀水鄉", "花壇鄉", "芬園鄉", "員林市", "溪湖鎮", "田中鎮", "大村鄉", "埔鹽鄉", "埔心鄉", "永靖鄉", "社頭鄉", "二水鄉", "北斗鎮", "溪州鄉", "竹塘鄉", "埤頭鄉", "田尾鄉", "二林鎮", "大城鄉", "芳苑鄉"],
             "南投縣": ["南投市", "埔里鎮", "草屯鎮", "竹山鎮", "集集鎮", "名間鄉", "鹿谷鄉", "中寮鄉", "魚池鄉", "國姓鄉", "水里鄉", "信義鄉", "仁愛鄉"],
             "雲林縣": ["斗六市", "斗南鎮", "虎尾鎮", "西螺鎮", "土庫鎮", "北港鎮", "古坑鄉", "大埤鄉", "莿桐鄉", "林內鄉", "二崙鄉", "崙背鄉", "麥寮鄉", "東勢鄉", "褒忠鄉", "台西鄉", "元長鄉", "四湖鄉", "口湖鄉", "水林鄉"],
             "嘉義市": ["東區", "西區"],
             "嘉義縣": ["太保市", "朴子市", "布袋鎮", "大林鎮", "民雄鄉", "溪口鄉", "新港鄉", "六腳鄉", "東石鄉", "義竹鄉", "鹿草鄉", "水上鄉", "中埔鄉", "竹崎鄉", "梅山鄉", "番路鄉", "大埔鄉", "阿里山鄉"],
+            "台南市": ["中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區", "新化區", "左鎮區", "玉井區", "楠西區", "南化區", "仁德區", "關廟區", "龍崎區", "官田區", "麻豆區", "佳里區", "西港區", "七股區", "將軍區", "學甲區", "北門區", "新營區", "後壁區", "白河區", "東山區", "六甲區", "下營區", "柳營區", "鹽水區", "善化區", "大內區", "山上區", "新市區", "安定區"],
+            "高雄市": ["新興區", "前金區", "苓雅區", "鹽埕區", "鼓山區", "旗津區", "前鎮區", "三民區", "楠梓區", "小港區", "左營區", "仁武區", "大社區", "岡山區", "路竹區", "阿蓮區", "田寮區", "燕巢區", "橋頭區", "梓官區", "彌陀區", "永安區", "湖內區", "鳳山區", "大寮區", "林園區", "鳥松區", "大樹區", "旗山區", "美濃區", "內門區", "杉林區", "甲仙區", "六龜區", "茂林區", "桃源區", "那瑪夏區"],
             "屏東縣": ["屏東市", "三地門鄉", "霧臺鄉", "瑪家鄉", "九如鄉", "里港鄉", "高樹鄉", "鹽埔鄉", "長治鄉", "麟洛鄉", "竹田鄉", "內埔鄉", "萬丹鄉", "潮州鎮", "泰武鄉", "來義鄉", "萬巒鄉", "崁頂鄉", "新埤鄉", "南州鄉", "林邊鄉", "東港鎮", "琉球鄉", "佳冬鄉", "新園鄉", "枋寮鄉", "枋山鄉", "春日鄉", "獅子鄉", "車城鄉", "牡丹鄉", "恆春鎮", "滿州鄉"],
             "宜蘭縣": ["宜蘭市", "羅東鎮", "蘇澳鎮", "頭城鎮", "礁溪鄉", "壯圍鄉", "員山鄉", "冬山鄉", "五結鄉", "三星鄉", "大同鄉", "南澳鄉"],
             "花蓮縣": ["花蓮市", "鳳林鎮", "玉里鎮", "新城鄉", "吉安鄉", "壽豐鄉", "光復鄉", "豐濱鄉", "瑞穗鄉", "富里鄉", "秀林鄉", "萬榮鄉", "卓溪鄉"],
@@ -164,12 +134,10 @@
         };
 
         let userName = "賓客";
-
         async function main() {
             await liff.init({ liffId: "2009589320-tRfh7Al6" });
             if (liff.isLoggedIn()) {
-                const profile = await liff.getProfile();
-                userName = profile.displayName;
+                const profile = await liff.getProfile(); userName = profile.displayName;
                 document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
             } else { liff.login(); }
             initCityDropdowns(); initPaxDropdowns(); initLugDropdowns(); loadStorage();
@@ -180,15 +148,8 @@
             const fat = parseInt(document.getElementById(`${type}-lug-fat`).value);
             const lug28 = parseInt(document.getElementById(`${type}-lug-28`).value);
             const lug24 = parseInt(document.getElementById(`${type}-lug-24`).value);
-            const isOver = (
-                (fat >= 5 && lug28 >= 3) || (fat >= 5 && lug24 >= 4) ||
-                (fat >= 4 && lug28 >= 4) || (fat >= 4 && lug24 >= 5) ||
-                (fat >= 3 && lug28 >= 5) || (fat >= 3 && lug24 >= 6)
-            );
-            if (isOver) {
-                alert("⚠️ 行李超載警告\n\n您選擇的組合已超過單車承載上限。\n請減輕行李「胖胖箱」數量，否則無法承接預約。");
-                document.getElementById(`${type}-lug-fat`).value = "0";
-            }
+            const isOver = ((fat>=5 && lug28>=3) || (fat>=5 && lug24>=4) || (fat>=4 && lug28>=4) || (fat>=4 && lug24>=5) || (fat>=3 && lug28>=5) || (fat>=3 && lug24>=6));
+            if (isOver) { alert("⚠️ 行李超載警告\n\n您選擇的組合已超過單車承載上限。\n請減輕行李「胖胖箱」數量。"); document.getElementById(`${type}-lug-fat`).value = "0"; }
         }
 
         function initCityDropdowns() {
@@ -215,15 +176,7 @@
             const group = document.getElementById(type + 'SeatGroup');
             if(group.children.length >= 5) return alert("最多新增 5 項座椅需求");
             const div = document.createElement('div'); div.className = "seat-item";
-            div.innerHTML = `
-                <select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty'); qs.style.display=(this.value!=='')?'block':'none';">
-                    <option value="">請選擇座椅種類</option>
-                    <option value="正向安全座椅">正向安全座椅</option>
-                    <option value="反向安全座椅">反向安全座椅</option>
-                    <option value="增高墊">增高墊</option>
-                </select>
-                <select class="seat-qty"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select>
-            `;
+            div.innerHTML = `<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty'); qs.style.display=(this.value!=='')?'block':'none';"><option value="">請選擇座椅種類</option><option value="正向安全座椅">正向安全座椅</option><option value="反向安全座椅">反向安全座椅</option><option value="增高墊">增高墊</option></select><select class="seat-qty"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select>`;
             group.appendChild(div);
         }
 
@@ -241,8 +194,7 @@
                 if (localStorage.getItem(`${t}_cb`) === 'true') {
                     document.getElementById(`save-${t}`).checked = true;
                     if(localStorage.getItem(`${t}_city`)) {
-                        document.getElementById(`${t}-city`).value = localStorage.getItem(`${t}_city`);
-                        updateDistricts(t);
+                        document.getElementById(`${t}-city`).value = localStorage.getItem(`${t}_city`); updateDistricts(t);
                         document.getElementById(`${t}-dist`).value = localStorage.getItem(`${t}_dist`);
                         document.getElementById(`${t}-detail`).value = localStorage.getItem(`${t}_detail`);
                     }
@@ -282,6 +234,7 @@
         async function submitAll() {
             const depD = document.getElementById('dep-date').value; const arrD = document.getElementById('arr-date').value;
             if (!depD && !arrD) return alert("請填寫預約日期");
+
             localStorage.setItem('musen_phone', document.getElementById('dep-phone').value);
             ['dep', 'arr'].forEach(t => {
                 const cb = document.getElementById(`save-${t}`).checked; localStorage.setItem(`${t}_cb`, cb);
@@ -293,18 +246,30 @@
             });
 
             let finalMsg = `【 沐森商務｜預約需求 】\n👤 姓名：${userName}\n\n`;
+            let payloads = []; // 用於發送給 Google Sheets 的資料陣列
+
             if (depD) {
                 let addr = document.getElementById('dep-city').value + document.getElementById('dep-dist').value + document.getElementById('dep-detail').value;
                 let ex = ""; document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) ex += ` 加點${i+1}:${el.value}`; });
                 let p = `${document.getElementById('dep-adult').value}大 ${document.getElementById('dep-child').value}小`;
-                finalMsg += `🛫 送機\n📅 日期：${depD}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${addr}${ex}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${p}\n🧳 行李：${getLuggageInfo('dep')}\n👶 座椅：${getSeatInfo('dep')}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                let lug = getLuggageInfo('dep'); let seat = getSeatInfo('dep');
+                finalMsg += `🛫 送機\n📅 日期：${depD}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${addr}${ex}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${p}\n🧳 行李：${lug}\n👶 座椅：${seat}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                payloads.push({ timestamp: new Date().toLocaleString(), type: "送機", userName: userName, phone: document.getElementById('dep-phone').value, flight: document.getElementById('dep-flight').value, date: depD, time: document.getElementById('dep-time').value, start: addr + ex, end: document.getElementById('dep-end').value, pax: p, luggage: lug, seat: seat, memo: document.getElementById('dep-memo').value });
             }
             if (arrD) {
                 let addr = document.getElementById('arr-city').value + document.getElementById('arr-dist').value + document.getElementById('arr-detail').value;
                 let ex = ""; document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) ex += ` 加點${i+1}:${el.value}`; });
                 let p = `${document.getElementById('arr-adult').value}大 ${document.getElementById('arr-child').value}小`;
-                finalMsg += `🛬 接機\n📅 日期：${arrD}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}${ex}\n👥 人數：${p}\n🧳 行李：${getLuggageInfo('arr')}\n👶 座椅：${getSeatInfo('arr')}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                let lug = getLuggageInfo('arr'); let seat = getSeatInfo('arr');
+                finalMsg += `🛬 接機\n📅 日期：${arrD}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}${ex}\n👥 人數：${p}\n🧳 行李：${lug}\n👶 座椅：${seat}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                payloads.push({ timestamp: new Date().toLocaleString(), type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrD, time: document.getElementById('arr-time').value, start: document.getElementById('arr-start').value, end: addr + ex, pax: p, luggage: lug, seat: seat, memo: document.getElementById('arr-memo').value });
             }
+
+            // --- 發送資料到 Google Sheets ---
+            payloads.forEach(data => {
+                fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+            });
+
             if (liff.isInClient()) { await liff.sendMessages([{ type: 'text', text: finalMsg }]); liff.closeWindow(); } else { alert(finalMsg); }
         }
     </script>
