@@ -23,7 +23,6 @@
         }
         textarea { height: auto; min-height: 80px; }
         
-        /* 地址連動列排版 */
         .address-row { display: flex; gap: 8px; margin-bottom: 8px; }
         .address-row select { flex: 1; }
         .full-address { margin-top: 5px; }
@@ -58,7 +57,7 @@
         <!-- 送機區塊 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
-            <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入聯絡電話"></div>
+            <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
             <div class="form-group"><label>去程 班機號碼</label><input type="text" id="dep-flight" placeholder="例如：BR198"></div>
             <div class="form-group"><label>上車時間</label><input type="time" id="dep-time"></div>
             
@@ -71,7 +70,7 @@
                 <input type="text" id="dep-detail" class="full-address" placeholder="門牌地址（如：忠孝東路四段1號）">
                 <div class="checkbox-container" onclick="toggleCB('save-dep')">
                     <input type="checkbox" id="save-dep" onclick="event.stopPropagation()">
-                    <span class="checkbox-label">下次繼續使用這個地址</span>
+                    <span class="checkbox-label">下次繼續使用這個地址與電話</span>
                 </div>
             </div>
 
@@ -86,7 +85,7 @@
         <!-- 接機區塊 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
-            <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話"></div>
+            <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
             <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
             <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
@@ -102,7 +101,7 @@
                 <input type="text" id="arr-detail" class="full-address" placeholder="門牌地址（如：忠孝西路一段1號）">
                 <div class="checkbox-container" onclick="toggleCB('save-arr')">
                     <input type="checkbox" id="save-arr" onclick="event.stopPropagation()">
-                    <span class="checkbox-label">下次繼續使用這個地址</span>
+                    <span class="checkbox-label">下次繼續使用這個地址與電話</span>
                 </div>
             </div>
 
@@ -134,11 +133,10 @@
     <script>
         const gasUrl = "https://script.google.com/macros/s/AKfycbwERHuFqQJTcBPaP2nC6tIObU9pvZ18IXblaKBLJHXU2wr--Y0JkswwEyalpVLfhQ1wbQ/exec";
         
-        // 台灣縣市行政區資料
         const twData = {
             "基隆市":["仁愛區","信義區","中正區","中山區","安樂區","暖暖區","七堵區"],
             "台北市":["中正區","大同區","中山區","松山區","大安區","萬華區","信義區","士林區","北投區","內湖區","南港區","文山區"],
-            "新北市":["萬里區","金山區","板橋區","汐止區","深坑區","石碇區","瑞芳區","平溪區","雙溪區","貢寮區","新店區","坪林區","烏來區","永和區","中和區","土城區","三峽區","樹林區","鶯歌區","三重區","蘆洲區","五股區","泰山區","林口區","三芝區","石門區","八里區","淡水區","三峽區"],
+            "新北市":["萬里區","金山區","板橋區","汐止區","深坑區","石碇區","瑞芳區","平溪區","雙溪區","貢寮區","新店區","坪林區","烏來區","永和區","中和區","土城區","三峽區","樹林區","鶯歌區","三重區","蘆洲區","五股區","泰山區","林口區","三芝區","石門區","八里區","淡水區"],
             "桃園市":["桃園區","中壢區","大溪區","楊梅區","蘆竹區","大園區","龜山區","八德區","龍潭區","平鎮區","新屋區","觀音區","復興區"],
             "新竹市":["東區","北區","香山區"],
             "新竹縣":["竹北市","湖口鄉","新豐鄉","新埔鎮","關西鎮","芎林鄉","寶山鄉","竹東鎮","五峰鄉","橫山鄉","尖石鄉","北埔鄉","峨眉鄉"],
@@ -150,7 +148,7 @@
             "嘉義市":["東區","西區"],
             "嘉義縣":["番路鄉","梅山鄉","竹崎鄉","阿里山鄉","大林鎮","民雄鄉","溪口鄉","新港鄉","朴子市","太保市","布袋鎮","義竹鄉","鹿草鄉","水上鄉","中埔鄉","竹崎鄉","大埔鄉"],
             "台南市":["中西區","東區","南區","北區","安平區","安南區","永康區","歸仁區","新化區","左鎮區","玉井區","楠西區","南化區","仁德區","關廟區","龍崎區","官田區","麻豆區","佳里區","西港區","七股區","將軍區","學甲區","北門區","新營區","後壁區","白河區","東山區","六甲區","下營區","柳營區","鹽水區","善化區","大內區","山上區","新市區","安定區"],
-            "高雄市":["興興區","前金區","苓雅區","鹽埕區","鼓山區","旗津區","前鎮區","三民區","楠梓區","小港區","左營區","仁武區","大社區","岡山區","路竹區","阿蓮區","田寮區","燕巢區","橋頭區","梓官區","彌陀區","永安區","湖內區","鳳山區","大寮區","林園區","鳥松區","大樹區","旗山區","美濃區","內門區","杉林區","甲仙區","六龜區","茂林區","桃源區","那瑪夏區"],
+            "高雄市":["新興區","前金區","苓雅區","鹽埕區","鼓山區","旗津區","前鎮區","三民區","楠梓區","小港區","左營區","仁武區","大社區","岡山區","路竹區","阿蓮區","田寮區","燕巢區","橋頭區","梓官區","彌陀區","永安區","湖內區","鳳山區","大寮區","林園區","鳥松區","大樹區","旗山區","美濃區","內門區","杉林區","甲仙區","六龜區","茂林區","桃源區","那瑪夏區"],
             "屏東縣":["屏東市","三地門鄉","霧臺鄉","瑪家鄉","九如鄉","里港鄉","高樹鄉","鹽埔鄉","長治鄉","麟洛鄉","竹田鄉","內埔鄉","萬丹鄉","潮州鎮","泰武鄉","來義鄉","萬巒鄉","崁頂鄉","新埤鄉","南州鄉","林邊鄉","東港鎮","琉球鄉","佳冬鄉","新園鄉","枋寮鄉","枋山鄉","春日鄉","獅子鄉","車城鄉","牡丹鄉","恆春鎮","滿州鄉"],
             "宜蘭縣":["宜蘭市","頭城鎮","礁溪鄉","壯圍鄉","員山鄉","羅東鎮","三星鄉","大同鄉","五結鄉","冬山鄉","蘇澳鎮","南澳鄉"],
             "花蓮縣":["花蓮市","新城鄉","秀林鄉","吉安鄉","壽豐鄉","鳳林鎮","光復鄉","豐濱鄉","瑞穗鄉","玉里鎮","富里鄉","卓溪鄉","萬榮鄉"],
@@ -192,27 +190,39 @@
             });
         }
 
+        // 同步填寫送機與接機電話
+        function syncPhone(val) {
+            document.getElementById('dep-phone').value = val;
+            document.getElementById('arr-phone').value = val;
+        }
+
         function loadStorage() {
+            // 優先讀取電話與名字記憶
             if (localStorage.getItem('musen_phone')) {
                 const phone = localStorage.getItem('musen_phone');
                 document.getElementById('dep-phone').value = phone;
                 document.getElementById('arr-phone').value = phone;
             }
+
             // 讀取送機暫存
             if (localStorage.getItem('dep_cb') === 'true') {
                 document.getElementById('save-dep').checked = true;
-                document.getElementById('dep-city').value = localStorage.getItem('dep_city');
-                updateDistricts('dep');
-                document.getElementById('dep-dist').value = localStorage.getItem('dep_dist');
-                document.getElementById('dep-detail').value = localStorage.getItem('dep_detail');
+                if(localStorage.getItem('dep_city')) {
+                    document.getElementById('dep-city').value = localStorage.getItem('dep_city');
+                    updateDistricts('dep');
+                    document.getElementById('dep-dist').value = localStorage.getItem('dep_dist');
+                    document.getElementById('dep-detail').value = localStorage.getItem('dep_detail');
+                }
             }
             // 讀取接機暫存
             if (localStorage.getItem('arr_cb') === 'true') {
                 document.getElementById('save-arr').checked = true;
-                document.getElementById('arr-city').value = localStorage.getItem('arr_city');
-                updateDistricts('arr');
-                document.getElementById('arr-dist').value = localStorage.getItem('arr_dist');
-                document.getElementById('arr-detail').value = localStorage.getItem('arr_detail');
+                if(localStorage.getItem('arr_city')) {
+                    document.getElementById('arr-city').value = localStorage.getItem('arr_city');
+                    updateDistricts('arr');
+                    document.getElementById('arr-dist').value = localStorage.getItem('arr_dist');
+                    document.getElementById('arr-detail').value = localStorage.getItem('arr_detail');
+                }
             }
         }
 
@@ -246,7 +256,7 @@
             if (!depDate && !arrDate) return alert("請填寫預約日期");
 
             // 儲存邏輯
-            const phone = document.getElementById('dep-phone').value || document.getElementById('arr-phone').value;
+            const phone = document.getElementById('dep-phone').value;
             localStorage.setItem('musen_phone', phone);
 
             // 送機儲存
