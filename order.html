@@ -16,32 +16,20 @@
         .form-section.active { display: block; }
         .form-group { margin-bottom: 18px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaa; }
-        
-        input, select, textarea { 
-            width: 100%; height: 48px; padding: 12px; border-radius: 8px; border: 1px solid #444; 
-            background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none;
-        }
+        input, select, textarea { width: 100%; height: 48px; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none; }
         textarea { height: auto; min-height: 80px; }
-        
+        .row-group { display: flex; gap: 10px; }
+        .row-group .form-group { flex: 1; }
         .address-row { display: flex; gap: 8px; margin-bottom: 8px; }
         .address-row select { flex: 1; }
         .full-address { margin-top: 5px; }
-
         .add-btn { background: transparent; color: #d4af37; border: 1px dashed #d4af37; padding: 10px; width: 100%; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-size: 14px; }
-
-        .checkbox-container {
-            display: flex; align-items: center; margin-top: 10px; padding: 12px; background: #2a2a2a; 
-            border-radius: 8px; cursor: pointer; border: 1px solid #444; width: 100%; box-sizing: border-box;
-        }
+        .checkbox-container { display: flex; align-items: center; margin-top: 10px; padding: 12px; background: #2a2a2a; border-radius: 8px; cursor: pointer; border: 1px solid #444; width: 100%; box-sizing: border-box; }
         input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; accent-color: #d4af37; -webkit-appearance: checkbox; }
         .checkbox-label { color: #d4af37; font-size: 14px; cursor: pointer; user-select: none; flex: 1; }
-
-        .policy-box {
-            margin-top: 25px; padding: 15px; background: #2d2d2d; border-radius: 10px; border: 1px solid #444; font-size: 13px; color: #ccc; line-height: 1.6;
-        }
+        .policy-box { margin-top: 25px; padding: 15px; background: #2d2d2d; border-radius: 10px; border: 1px solid #444; font-size: 13px; color: #ccc; line-height: 1.6; }
         .policy-title { color: #d4af37; font-weight: bold; margin-bottom: 8px; display: block; text-align: center; border-bottom: 1px solid #444; padding-bottom: 8px; }
         .policy-content { height: 140px; overflow-y: scroll; padding-right: 5px; }
-
         .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
         .footer-note { font-size: 12px; color: #666; margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 15px; }
     </style>
@@ -54,15 +42,14 @@
             <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機填寫</div>
         </div>
 
-        <!-- 送機區塊 -->
+        <!-- 送機 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
             <div class="form-group"><label>去程 班機號碼</label><input type="text" id="dep-flight" placeholder="例如：BR198"></div>
             <div class="form-group"><label>上車時間</label><input type="time" id="dep-time"></div>
-            
             <div class="form-group">
-                <label>上車起點（住家/辦公室）</label>
+                <label>上車起點</label>
                 <div class="address-row">
                     <select id="dep-city" onchange="updateDistricts('dep')"></select>
                     <select id="dep-dist"></select>
@@ -73,16 +60,18 @@
                     <span class="checkbox-label">下次繼續使用這個地址與電話</span>
                 </div>
             </div>
-
             <div id="depExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="例如：桃園機場第一航廈"></div>
-            <div class="form-group"><label>乘車人數</label><input type="number" id="dep-pax" placeholder="例如：3" min="1"></div>
+            <div class="row-group">
+                <div class="form-group"><label>大人</label><select id="dep-adult"></select></div>
+                <div class="form-group"><label>小孩</label><select id="dep-child"></select></div>
+            </div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="dep-lug" placeholder="例如：28吋x2"></div>
             <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2"></textarea></div>
         </div>
 
-        <!-- 接機區塊 -->
+        <!-- 接機 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
@@ -91,9 +80,8 @@
             <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="例如：桃園機場第二航廈"></div>
             <div id="arrExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
-            
             <div class="form-group">
-                <label>接機終點（送達地址）</label>
+                <label>接機終點</label>
                 <div class="address-row">
                     <select id="arr-city" onchange="updateDistricts('arr')"></select>
                     <select id="arr-dist"></select>
@@ -104,21 +92,22 @@
                     <span class="checkbox-label">下次繼續使用這個地址與電話</span>
                 </div>
             </div>
-
-            <div class="form-group"><label>乘車人數</label><input type="number" id="arr-pax" placeholder="例如：3" min="1"></div>
+            <div class="row-group">
+                <div class="form-group"><label>大人</label><select id="arr-adult"></select></div>
+                <div class="form-group"><label>小孩</label><select id="arr-child"></select></div>
+            </div>
             <div class="form-group"><label>行李件數/尺寸</label><input type="text" id="arr-lug" placeholder="例如：28吋x2"></div>
             <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
 
-        <!-- 取消公約區 -->
         <div class="policy-box">
             <span class="policy-title">沐森禮賓 取消與退款公約</span>
             <div class="policy-content">
-                1. <strong>用車 48 小時前</strong>取消：全額退費（需扣除匯款手續費）。<br>
-                2. <strong>用車 24-48 小時內</strong>取消：扣除 50% 車資費用。<br>
+                1. <strong>用車 48 小時前</strong>取消：全額退費。<br>
+                2. <strong>用車 24-48 小時內</strong>取消：扣除 50% 車資。<br>
                 3. <strong>用車 24 小時內或當日</strong>取消：不予退費。<br>
-                4. 如遇航班取消、天災，請提供證明，我們將協助改派或保留資格。<br>
-                5. 司機抵達後等候 30 分鐘且聯繫不上，視同放棄服務。
+                4. 如遇不可抗力之因素，請提供證明，我們將協助改派。<br>
+                5. 司機抵達後等候 30 分鐘且聯繫不上，不予退費。
             </div>
             <div class="checkbox-container" onclick="toggleCB('agree-policy')" style="margin-top: 10px; border: 1px solid #d4af37;">
                 <input type="checkbox" id="agree-policy" onclick="event.stopPropagation()">
@@ -133,26 +122,30 @@
     <script>
         const gasUrl = "https://script.google.com/macros/s/AKfycbwERHuFqQJTcBPaP2nC6tIObU9pvZ18IXblaKBLJHXU2wr--Y0JkswwEyalpVLfhQ1wbQ/exec";
         
+        // 完整全台行政區資料
         const twData = {
-            "基隆市":["仁愛區","信義區","中正區","中山區","安樂區","暖暖區","七堵區"],
-            "台北市":["中正區","大同區","中山區","松山區","大安區","萬華區","信義區","士林區","北投區","內湖區","南港區","文山區"],
-            "新北市":["萬里區","金山區","板橋區","汐止區","深坑區","石碇區","瑞芳區","平溪區","雙溪區","貢寮區","新店區","坪林區","烏來區","永和區","中和區","土城區","三峽區","樹林區","鶯歌區","三重區","蘆洲區","五股區","泰山區","林口區","三芝區","石門區","八里區","淡水區"],
-            "桃園市":["桃園區","中壢區","大溪區","楊梅區","蘆竹區","大園區","龜山區","八德區","龍潭區","平鎮區","新屋區","觀音區","復興區"],
-            "新竹市":["東區","北區","香山區"],
-            "新竹縣":["竹北市","湖口鄉","新豐鄉","新埔鎮","關西鎮","芎林鄉","寶山鄉","竹東鎮","五峰鄉","橫山鄉","尖石鄉","北埔鄉","峨眉鄉"],
-            "苗栗縣":["竹南鎮","頭份市","三灣鄉","南庄鄉","獅潭鄉","後龍鎮","造橋鄉","頭屋鄉","苗栗市","公館鄉","大湖鄉","泰安鄉","銅鑼鄉","通霄鎮","苑裡鎮","西湖鄉","三義鄉","卓蘭鎮"],
-            "台中市":["中區","東區","南區","西區","北區","北屯區","西屯區","南屯區","太平區","大里區","霧峰區","烏日區","豐原區","后里區","石岡區","東勢區","和平區","新社區","潭子區","大雅區","神岡區","大肚區","沙鹿區","龍井區","梧棲區","清水區","大甲區","外埔區","大安區"],
-            "彰化縣":["彰化市","芬園鄉","花壇鄉","秀水鄉","鹿港鎮","福興鄉","線西鄉","和美鎮","伸港鄉","員林市","社頭鄉","永靖鄉","埔心鄉","溪湖鎮","大村鄉","埔鹽鄉","田中鎮","北斗鎮","田尾鄉","埤頭鄉","溪州鄉","竹塘鄉","二林鎮","大城鄉","芳苑鄉","二水鄉"],
-            "南投縣":["南投市","中寮鄉","草屯鎮","國姓鄉","埔里鎮","仁愛鄉","名間鄉","集集鎮","水里鄉","魚池鄉","信義鄉","竹山鎮","鹿谷鄉"],
-            "雲林縣":["斗南鎮","大埤鄉","虎尾鎮","土庫鎮","褒忠鄉","東勢鄉","台西鄉","崙背鄉","麥寮鄉","斗六市","林內鄉","古坑鄉","莿桐鄉","西螺鎮","二崙鄉","北港鎮","水林鄉","口湖鄉","四湖鄉","元長鄉"],
-            "嘉義市":["東區","西區"],
-            "嘉義縣":["番路鄉","梅山鄉","竹崎鄉","阿里山鄉","大林鎮","民雄鄉","溪口鄉","新港鄉","朴子市","太保市","布袋鎮","義竹鄉","鹿草鄉","水上鄉","中埔鄉","竹崎鄉","大埔鄉"],
-            "台南市":["中西區","東區","南區","北區","安平區","安南區","永康區","歸仁區","新化區","左鎮區","玉井區","楠西區","南化區","仁德區","關廟區","龍崎區","官田區","麻豆區","佳里區","西港區","七股區","將軍區","學甲區","北門區","新營區","後壁區","白河區","東山區","六甲區","下營區","柳營區","鹽水區","善化區","大內區","山上區","新市區","安定區"],
-            "高雄市":["新興區","前金區","苓雅區","鹽埕區","鼓山區","旗津區","前鎮區","三民區","楠梓區","小港區","左營區","仁武區","大社區","岡山區","路竹區","阿蓮區","田寮區","燕巢區","橋頭區","梓官區","彌陀區","永安區","湖內區","鳳山區","大寮區","林園區","鳥松區","大樹區","旗山區","美濃區","內門區","杉林區","甲仙區","六龜區","茂林區","桃源區","那瑪夏區"],
-            "屏東縣":["屏東市","三地門鄉","霧臺鄉","瑪家鄉","九如鄉","里港鄉","高樹鄉","鹽埔鄉","長治鄉","麟洛鄉","竹田鄉","內埔鄉","萬丹鄉","潮州鎮","泰武鄉","來義鄉","萬巒鄉","崁頂鄉","新埤鄉","南州鄉","林邊鄉","東港鎮","琉球鄉","佳冬鄉","新園鄉","枋寮鄉","枋山鄉","春日鄉","獅子鄉","車城鄉","牡丹鄉","恆春鎮","滿州鄉"],
-            "宜蘭縣":["宜蘭市","頭城鎮","礁溪鄉","壯圍鄉","員山鄉","羅東鎮","三星鄉","大同鄉","五結鄉","冬山鄉","蘇澳鎮","南澳鄉"],
-            "花蓮縣":["花蓮市","新城鄉","秀林鄉","吉安鄉","壽豐鄉","鳳林鎮","光復鄉","豐濱鄉","瑞穗鄉","玉里鎮","富里鄉","卓溪鄉","萬榮鄉"],
-            "台東縣":["台東市","三和鄉","卑南鄉","大武鄉","太麻里鄉","金峰鄉","巵山鄉","達仁鄉","關山鎮","海端鄉","池上鄉","鹿野鄉","延平鄉","成功鎮","長濱鄉","東河鄉","綠島鄉","蘭嶼鄉"]
+            "台北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"],
+            "新北市": ["板橋區", "三重區", "中和區", "永和區", "新莊區", "新店區", "土城區", "蘆洲區", "樹林區", "汐止區", "三峽區", "淡水區", "鶯歌區", "五股區", "泰山區", "林口區", "深坑區", "石碇區", "坪林區", "三芝區", "石門區", "八里區", "平溪區", "雙溪區", "貢寮區", "金山區", "萬里區", "烏來區", "瑞芳區"],
+            "桃園市": ["桃園區", "中壢區", "大溪區", "楊梅區", "蘆竹區", "大園區", "龜山區", "八德區", "龍潭區", "平鎮區", "新屋區", "觀音區", "復興區"],
+            "台中市": ["中區", "東區", "南區", "西區", "北區", "北屯區", "西屯區", "南屯區", "太平區", "大里區", "霧峰區", "烏日區", "豐原區", "后里區", "石岡區", "東勢區", "和平區", "新社區", "潭子區", "大雅區", "神岡區", "大肚區", "沙鹿區", "龍井區", "梧棲區", "清水區", "大甲區", "外埔區", "大安區"],
+            "台南市": ["中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區", "新化區", "左鎮區", "玉井區", "楠西區", "南化區", "仁德區", "關廟區", "龍崎區", "官田區", "麻豆區", "佳里區", "西港區", "七股區", "將軍區", "學甲區", "北門區", "新營區", "後壁區", "白河區", "東山區", "六甲區", "下營區", "柳營區", "鹽水區", "善化區", "大內區", "山上區", "新市區", "安定區"],
+            "高雄市": ["新興區", "前金區", "苓雅區", "鹽埕區", "鼓山區", "旗津區", "前鎮區", "三民區", "楠梓區", "小港區", "左營區", "仁武區", "大社區", "岡山區", "路竹區", "阿蓮區", "田寮區", "燕巢區", "橋頭區", "梓官區", "彌陀區", "永安區", "湖內區", "鳳山區", "大寮區", "林園區", "鳥松區", "大樹區", "旗山區", "美濃區", "內門區", "杉林區", "甲仙區", "六龜區", "茂林區", "桃源區", "那瑪夏區"],
+            "基隆市": ["仁愛區", "信義區", "中正區", "中山區", "安樂區", "暖暖區", "七堵區"],
+            "新竹市": ["東區", "北區", "香山區"],
+            "新竹縣": ["竹北市", "湖口鄉", "新豐鄉", "新埔鎮", "關西鎮", "芎林鄉", "寶山鄉", "竹東鎮", "五峰鄉", "橫山鄉", "尖石鄉", "北埔鄉", "峨眉鄉"],
+            "苗栗縣": ["苗栗市", "頭份市", "竹南鎮", "後龍鎮", "通霄鎮", "苑裡鎮", "卓蘭鎮", "造橋鄉", "西湖鄉", "頭屋鄉", "公館鄉", "銅鑼鄉", "三義鄉", "大湖鄉", "獅潭鄉", "三灣鄉", "南庄鄉", "泰安鄉"],
+            "彰化縣": ["彰化市", "鹿港鎮", "和美鎮", "線西鄉", "伸港鄉", "福興鄉", "秀水鄉", "花壇鄉", "芬園鄉", "員林市", "溪湖鎮", "田中鎮", "大村鄉", "埔鹽鄉", "埔心鄉", "永靖鄉", "社頭鄉", "二水鄉", "北斗鎮", "溪州鄉", "竹塘鄉", "埤頭鄉", "田尾鄉", "二林鎮", "大城鄉", "芳苑鄉"],
+            "南投縣": ["南投市", "埔里鎮", "草屯鎮", "竹山鎮", "集集鎮", "名間鄉", "鹿谷鄉", "中寮鄉", "魚池鄉", "國姓鄉", "水里鄉", "信義鄉", "仁愛鄉"],
+            "雲林縣": ["斗六市", "斗南鎮", "虎尾鎮", "西螺鎮", "土庫鎮", "北港鎮", "古坑鄉", "大埤鄉", "莿桐鄉", "林內鄉", "二崙鄉", "崙背鄉", "麥寮鄉", "東勢鄉", "褒忠鄉", "台西鄉", "元長鄉", "四湖鄉", "口湖鄉", "水林鄉"],
+            "嘉義市": ["東區", "西區"],
+            "嘉義縣": ["太保市", "朴子市", "布袋鎮", "大林鎮", "民雄鄉", "溪口鄉", "新港鄉", "六腳鄉", "東石鄉", "義竹鄉", "鹿草鄉", "水上鄉", "中埔鄉", "竹崎鄉", "梅山鄉", "番路鄉", "大埔鄉", "阿里山鄉"],
+            "屏東縣": ["屏東市", "三地門鄉", "霧臺鄉", "瑪家鄉", "九如鄉", "里港鄉", "高樹鄉", "鹽埔鄉", "長治鄉", "麟洛鄉", "竹田鄉", "內埔鄉", "萬丹鄉", "潮州鎮", "泰武鄉", "來義鄉", "萬巒鄉", "崁頂鄉", "新埤鄉", "南州鄉", "林邊鄉", "東港鎮", "琉球鄉", "佳冬鄉", "新園鄉", "枋寮鄉", "枋山鄉", "春日鄉", "獅子鄉", "車城鄉", "牡丹鄉", "恆春鎮", "滿州鄉"],
+            "宜蘭縣": ["宜蘭市", "羅東鎮", "蘇澳鎮", "頭城鎮", "礁溪鄉", "壯圍鄉", "員山鄉", "冬山鄉", "五結鄉", "三星鄉", "大同鄉", "南澳鄉"],
+            "花蓮縣": ["花蓮市", "鳳林鎮", "玉里鎮", "新城鄉", "吉安鄉", "壽豐鄉", "光復鄉", "豐濱鄉", "瑞穗鄉", "富里鄉", "秀林鄉", "萬榮鄉", "卓溪鄉"],
+            "台東縣": ["台東市", "成功鎮", "關山鎮", "卑南鄉", "鹿野鄉", "池上鄉", "東河鄉", "長濱鄉", "太麻里鄉", "大武鄉", "綠島鄉", "海端鄉", "延平鄉", "金峰鄉", "達仁鄉", "蘭嶼鄉"],
+            "澎湖縣": ["馬公市", "湖西鄉", "白沙鄉", "西嶼鄉", "望安鄉", "七美鄉"],
+            "金門縣": ["金城鎮", "金湖鎮", "金沙鎮", "金寧鄉", "烈嶼鄉", "烏坵鄉"],
+            "連江縣": ["南竿鄉", "北竿鄉", "莒光鄉", "東引鄉"]
         };
 
         let userName = "賓客";
@@ -164,8 +157,9 @@
                 userName = profile.displayName;
                 document.getElementById('userNameDisplay').innerText = `尊貴的 ${userName} 您好`;
             } else { liff.login(); }
-
+            
             initCityDropdowns();
+            initPaxDropdowns();
             loadStorage();
         }
         main();
@@ -177,65 +171,55 @@
                 dCity.add(new Option(city, city));
                 aCity.add(new Option(city, city));
             });
-            updateDistricts('dep');
-            updateDistricts('arr');
+            updateDistricts('dep'); updateDistricts('arr');
+        }
+
+        function initPaxDropdowns() {
+            const ids = ['dep-adult', 'dep-child', 'arr-adult', 'arr-child'];
+            ids.forEach(id => {
+                const sel = document.getElementById(id);
+                const start = (id.includes('adult')) ? 1 : 0;
+                for(let i=start; i<=8; i++) {
+                    sel.add(new Option(`${i}位`, i));
+                }
+            });
         }
 
         function updateDistricts(type) {
             const city = document.getElementById(`${type}-city`).value;
             const distSel = document.getElementById(`${type}-dist`);
             distSel.innerHTML = "";
-            twData[city].forEach(dist => {
-                distSel.add(new Option(dist, dist));
-            });
+            twData[city].forEach(dist => { distSel.add(new Option(dist, dist)); });
         }
 
-        // 同步填寫送機與接機電話
         function syncPhone(val) {
             document.getElementById('dep-phone').value = val;
             document.getElementById('arr-phone').value = val;
         }
 
         function loadStorage() {
-            // 優先讀取電話與名字記憶
-            if (localStorage.getItem('musen_phone')) {
-                const phone = localStorage.getItem('musen_phone');
-                document.getElementById('dep-phone').value = phone;
-                document.getElementById('arr-phone').value = phone;
-            }
-
-            // 讀取送機暫存
-            if (localStorage.getItem('dep_cb') === 'true') {
-                document.getElementById('save-dep').checked = true;
-                if(localStorage.getItem('dep_city')) {
-                    document.getElementById('dep-city').value = localStorage.getItem('dep_city');
-                    updateDistricts('dep');
-                    document.getElementById('dep-dist').value = localStorage.getItem('dep_dist');
-                    document.getElementById('dep-detail').value = localStorage.getItem('dep_detail');
+            if (localStorage.getItem('musen_phone')) syncPhone(localStorage.getItem('musen_phone'));
+            ['dep', 'arr'].forEach(type => {
+                if (localStorage.getItem(`${type}_cb`) === 'true') {
+                    document.getElementById(`save-${type}`).checked = true;
+                    if(localStorage.getItem(`${type}_city`)) {
+                        document.getElementById(`${type}-city`).value = localStorage.getItem(`${type}_city`);
+                        updateDistricts(type);
+                        document.getElementById(`${type}-dist`).value = localStorage.getItem(`${type}_dist`);
+                        document.getElementById(`${type}-detail`).value = localStorage.getItem(`${type}_detail`);
+                    }
                 }
-            }
-            // 讀取接機暫存
-            if (localStorage.getItem('arr_cb') === 'true') {
-                document.getElementById('save-arr').checked = true;
-                if(localStorage.getItem('arr_city')) {
-                    document.getElementById('arr-city').value = localStorage.getItem('arr_city');
-                    updateDistricts('arr');
-                    document.getElementById('arr-dist').value = localStorage.getItem('arr_dist');
-                    document.getElementById('arr-detail').value = localStorage.getItem('arr_detail');
-                }
-            }
+            });
         }
 
-        function toggleCB(id) {
-            const el = document.getElementById(id);
-            el.checked = !el.checked;
-        }
+        function toggleCB(id) { document.getElementById(id).checked = !document.getElementById(id).checked; }
 
         function switchTab(mode) {
-            document.getElementById('tabDep').className = (mode === 'departure' ? 'tab active' : 'tab');
-            document.getElementById('tabArr').className = (mode === 'arrival' ? 'tab active' : 'tab');
-            document.getElementById('depSection').className = (mode === 'departure' ? 'form-section active' : 'form-section');
-            document.getElementById('arrSection').className = (mode === 'arrival' ? 'form-section active' : 'form-section');
+            const isDep = mode === 'departure';
+            document.getElementById('tabDep').className = isDep ? 'tab active' : 'tab';
+            document.getElementById('tabArr').className = isDep ? 'tab' : 'tab active';
+            document.getElementById('depSection').className = isDep ? 'form-section active' : 'form-section';
+            document.getElementById('arrSection').className = isDep ? 'form-section' : 'form-section active';
         }
 
         function addExtra(type) {
@@ -247,61 +231,43 @@
         }
 
         async function submitAll() {
-            if (!document.getElementById('agree-policy').checked) {
-                return alert("請先同意「取消退款公約」。");
-            }
-
+            if (!document.getElementById('agree-policy').checked) return alert("請先同意「取消退款公約」。");
             const depDate = document.getElementById('dep-date').value;
             const arrDate = document.getElementById('arr-date').value;
             if (!depDate && !arrDate) return alert("請填寫預約日期");
 
-            // 儲存邏輯
-            const phone = document.getElementById('dep-phone').value;
-            localStorage.setItem('musen_phone', phone);
-
-            // 送機儲存
-            const depCB = document.getElementById('save-dep').checked;
-            localStorage.setItem('dep_cb', depCB);
-            if (depCB) {
-                localStorage.setItem('dep_city', document.getElementById('dep-city').value);
-                localStorage.setItem('dep_dist', document.getElementById('dep-dist').value);
-                localStorage.setItem('dep_detail', document.getElementById('dep-detail').value);
-            }
-
-            // 接機儲存
-            const arrCB = document.getElementById('save-arr').checked;
-            localStorage.setItem('arr_cb', arrCB);
-            if (arrCB) {
-                localStorage.setItem('arr_city', document.getElementById('arr-city').value);
-                localStorage.setItem('arr_dist', document.getElementById('arr-dist').value);
-                localStorage.setItem('arr_detail', document.getElementById('arr-detail').value);
-            }
+            localStorage.setItem('musen_phone', document.getElementById('dep-phone').value);
+            ['dep', 'arr'].forEach(type => {
+                const cb = document.getElementById(`save-${type}`).checked;
+                localStorage.setItem(`${type}_cb`, cb);
+                if(cb) {
+                    localStorage.setItem(`${type}_city`, document.getElementById(`${type}-city`).value);
+                    localStorage.setItem(`${type}_dist`, document.getElementById(`${type}-dist`).value);
+                    localStorage.setItem(`${type}_detail`, document.getElementById(`${type}-detail`).value);
+                }
+            });
 
             let finalMsg = `【 沐森商務｜預約需求 】\n👤 姓名：${userName}\n\n`;
             let payloads = [];
 
             if (depDate) {
-                let start = document.getElementById('dep-city').value + document.getElementById('dep-dist').value + document.getElementById('dep-detail').value;
-                let extras = "";
-                document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛫 送機\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${start}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${document.getElementById('dep-pax').value}\n🧳 行李：${document.getElementById('dep-lug').value}\n\n`;
-                payloads.push({ type: "送機", userName: userName, date: depDate, start: start + extras, end: document.getElementById('dep-end').value, pax: document.getElementById('dep-pax').value });
+                let addr = document.getElementById('dep-city').value + document.getElementById('dep-dist').value + document.getElementById('dep-detail').value;
+                let extras = ""; document.querySelectorAll('.dep-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
+                let pax = `${document.getElementById('dep-adult').value}大 ${document.getElementById('dep-child').value}小`;
+                finalMsg += `🛫 送機\n📅 日期：${depDate}\n📞 電話：${document.getElementById('dep-phone').value}\n✈️ 班機：${document.getElementById('dep-flight').value}\n⏰ 上車：${document.getElementById('dep-time').value}\n📍 起點：${addr}\n🏁 終點：${document.getElementById('dep-end').value}\n👥 人數：${pax}\n🧳 行李：${document.getElementById('dep-lug').value}\n📝 備註：${document.getElementById('dep-memo').value || '無'}\n\n`;
+                payloads.push({ type: "送機", userName: userName, date: depDate, start: addr + extras, pax: pax });
             }
 
             if (arrDate) {
-                let end = document.getElementById('arr-city').value + document.getElementById('arr-dist').value + document.getElementById('arr-detail').value;
-                let extras = "";
-                document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
-                finalMsg += `🛬 接機\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${end}\n👥 人數：${document.getElementById('arr-pax').value}\n🧳 行李：${document.getElementById('arr-lug').value}\n\n`;
-                payloads.push({ type: "接機", userName: userName, date: arrDate, start: document.getElementById('arr-start').value, end: end + extras, pax: document.getElementById('arr-pax').value });
+                let addr = document.getElementById('arr-city').value + document.getElementById('arr-dist').value + document.getElementById('arr-detail').value;
+                let extras = ""; document.querySelectorAll('.arr-extra').forEach((el, i) => { if(el.value) extras += ` 加點${i+1}:${el.value}`; });
+                let pax = `${document.getElementById('arr-adult').value}大 ${document.getElementById('arr-child').value}小`;
+                finalMsg += `🛬 接機\n📅 日期：${arrDate}\n📞 電話：${document.getElementById('arr-phone').value}\n✈️ 班機：${document.getElementById('arr-flight').value}\n⏰ 落地：${document.getElementById('arr-time').value}\n📍 起點：${document.getElementById('arr-start').value}\n🏁 終點：${addr}\n👥 人數：${pax}\n🧳 行李：${document.getElementById('arr-lug').value}\n📝 備註：${document.getElementById('arr-memo').value || '無'}\n\n`;
+                payloads.push({ type: "接機", userName: userName, date: arrDate, end: addr + extras, pax: pax });
             }
 
             payloads.forEach(data => { fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); });
-
-            if (liff.isInClient()) {
-                await liff.sendMessages([{ type: 'text', text: finalMsg }]);
-                liff.closeWindow();
-            } else { alert(finalMsg); }
+            if (liff.isInClient()) { await liff.sendMessages([{ type: 'text', text: finalMsg }]); liff.closeWindow(); } else { alert(finalMsg); }
         }
     </script>
 </body>
