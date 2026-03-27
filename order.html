@@ -43,6 +43,7 @@
             <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機填寫</div>
         </div>
 
+        <!-- 送機區塊 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
@@ -63,22 +64,38 @@
             <div id="depExtraGroup"></div>
             <button type="button" class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="桃園機場航廈"></div>
-            <div class="row-group"><div class="form-group"><label>大人</label><select id="dep-adult"></select></div><div class="form-group"><label>小孩</label><select id="dep-child"></select></div></div>
+            
+            <div class="row-group">
+                <div class="form-group"><label>大人</label><select id="dep-adult"></select></div>
+                <div class="form-group"><label>小孩</label><select id="dep-child"></select></div>
+            </div>
+
             <div class="section-title">行李規格需求</div>
-            <div class="row-group"><div class="form-group"><label>手提行李</label><select class="lug-sel" id="dep-lug-hand" onchange="checkOverload('dep')"></select></div><div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="dep-lug-20" onchange="checkOverload('dep')"></select></div></div>
-            <div class="row-group"><div class="form-group"><label>24-26吋</label><select class="lug-sel" id="dep-lug-24" onchange="checkOverload('dep')"></select></div><div class="form-group"><label>28-30吋</label><select class="lug-sel" id="dep-lug-28" onchange="checkOverload('dep')"></select></div></div>
+            <div class="row-group">
+                <div class="form-group"><label>手提行李</label><select class="lug-sel" id="dep-lug-hand" onchange="checkOverload('dep')"></select></div>
+                <div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="dep-lug-20" onchange="checkOverload('dep')"></select></div>
+            </div>
+            <div class="row-group">
+                <div class="form-group"><label>24-26吋</label><select class="lug-sel" id="dep-lug-24" onchange="checkOverload('dep')"></select></div>
+                <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="dep-lug-28" onchange="checkOverload('dep')"></select></div>
+            </div>
             <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="dep-lug-fat" onchange="checkOverload('dep')"></select></div>
-            <div class="section-title">兒童座椅需求</div><div id="depSeatGroup"></div><button type="button" class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
+
+            <div class="section-title">兒童座椅需求</div>
+            <div id="depSeatGroup"></div>
+            <button type="button" class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="dep-memo" rows="2"></textarea></div>
         </div>
 
+        <!-- 接機區塊 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="請輸入聯絡電話" oninput="syncPhone(this.value)"></div>
             <div class="form-group"><label>回程 班機號碼</label><input type="text" id="arr-flight" placeholder="例如：BR199"></div>
             <div class="form-group"><label>落地時間</label><input type="time" id="arr-time"></div>
             <div class="form-group"><label>接機起點 (機場)</label><input type="text" id="arr-start" placeholder="桃園機場航廈"></div>
-            <div id="arrExtraGroup"></div><button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
+            <div id="arrExtraGroup"></div>
+            <button type="button" class="add-btn" onclick="addExtra('arr')">＋ 增加接機加點</button>
             <div class="form-group">
                 <label>接機終點</label>
                 <div class="address-row">
@@ -91,12 +108,26 @@
                     <span class="checkbox-label">下次繼續使用地址與電話</span>
                 </div>
             </div>
-            <div class="row-group"><div class="form-group"><label>大人</label><select id="arr-adult"></select></div><div class="form-group"><label>小孩</label><select id="arr-child"></select></div></div>
+            
+            <div class="row-group">
+                <div class="form-group"><label>大人</label><select id="arr-adult"></select></div>
+                <div class="form-group"><label>小孩</label><select id="arr-child"></select></div>
+            </div>
+
             <div class="section-title">行李規格需求</div>
-            <div class="row-group"><div class="form-group"><label>手提行李</label><select class="lug-sel" id="arr-lug-hand" onchange="checkOverload('arr')"></select></div><div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="arr-lug-20" onchange="checkOverload('arr')"></select></div></div>
-            <div class="row-group"><div class="form-group"><label>24-26吋</label><select class="lug-sel" id="arr-lug-24" onchange="checkOverload('arr')"></select></div><div class="form-group"><label>28-30吋</label><select class="lug-sel" id="arr-lug-28" onchange="checkOverload('arr')"></select></div></div>
+            <div class="row-group">
+                <div class="form-group"><label>手提行李</label><select class="lug-sel" id="arr-lug-hand" onchange="checkOverload('arr')"></select></div>
+                <div class="form-group"><label>20吋登機箱</label><select class="lug-sel" id="arr-lug-20" onchange="checkOverload('arr')"></select></div>
+            </div>
+            <div class="row-group">
+                <div class="form-group"><label>24-26吋</label><select class="lug-sel" id="arr-lug-24" onchange="checkOverload('arr')"></select></div>
+                <div class="form-group"><label>28-30吋</label><select class="lug-sel" id="arr-lug-28" onchange="checkOverload('arr')"></select></div>
+            </div>
             <div class="form-group"><label>胖胖箱</label><select class="lug-sel" id="arr-lug-fat" onchange="checkOverload('arr')"></select></div>
-            <div class="section-title">兒童座椅需求</div><div id="arrSeatGroup"></div><button type="button" class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
+
+            <div class="section-title">兒童座椅需求</div>
+            <div id="arrSeatGroup"></div>
+            <button type="button" class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="arr-memo" rows="2"></textarea></div>
         </div>
 
@@ -105,7 +136,6 @@
     </div>
 
     <script>
-        // --- 務必保留此 URL ---
         const gasUrl = "https://script.google.com/macros/s/AKfycbwERHuFqQJTcBPaP2nC6tIObU9pvZ18IXblaKBLJHXU2wr--Y0JkswwEyalpVLfhQ1wbQ/exec";
         
         const twData = {
@@ -149,7 +179,7 @@
             const lug28 = parseInt(document.getElementById(`${type}-lug-28`).value);
             const lug24 = parseInt(document.getElementById(`${type}-lug-24`).value);
             const isOver = ((fat>=5 && lug28>=3) || (fat>=5 && lug24>=4) || (fat>=4 && lug28>=4) || (fat>=4 && lug24>=5) || (fat>=3 && lug28>=5) || (fat>=3 && lug24>=6));
-            if (isOver) { alert("⚠️ 行李超載警告\n\n您選擇的組合已超過單車承載上限。\n請減輕行李「胖胖箱」數量。"); document.getElementById(`${type}-lug-fat`).value = "0"; }
+            if (isOver) { alert("⚠️ 行李超載警告\n\n您選擇的組合已超過單車承載上限。\n請減輕行李「胖胖箱」數量，否則無法承接預約。"); document.getElementById(`${type}-lug-fat`).value = "0"; }
         }
 
         function initCityDropdowns() {
@@ -189,10 +219,10 @@
         function syncPhone(v) { document.getElementById('dep-phone').value = v; document.getElementById('arr-phone').value = v; }
 
         function loadStorage() {
-            if (localStorage.getItem('musen_phone')) syncPhone(localStorage.getItem('musen_phone'));
             ['dep', 'arr'].forEach(t => {
                 if (localStorage.getItem(`${t}_cb`) === 'true') {
                     document.getElementById(`save-${t}`).checked = true;
+                    if (localStorage.getItem('musen_phone')) { syncPhone(localStorage.getItem('musen_phone')); }
                     if(localStorage.getItem(`${t}_city`)) {
                         document.getElementById(`${t}-city`).value = localStorage.getItem(`${t}_city`); updateDistricts(t);
                         document.getElementById(`${t}-dist`).value = localStorage.getItem(`${t}_dist`);
@@ -235,18 +265,25 @@
             const depD = document.getElementById('dep-date').value; const arrD = document.getElementById('arr-date').value;
             if (!depD && !arrD) return alert("請填寫預約日期");
 
-            localStorage.setItem('musen_phone', document.getElementById('dep-phone').value);
+            // 手機號碼嚴格儲存邏輯
+            const depCB = document.getElementById('save-dep').checked;
+            const arrCB = document.getElementById('save-arr').checked;
+            if (depCB || arrCB) { localStorage.setItem('musen_phone', document.getElementById('dep-phone').value); }
+            else { localStorage.removeItem('musen_phone'); }
+
             ['dep', 'arr'].forEach(t => {
                 const cb = document.getElementById(`save-${t}`).checked; localStorage.setItem(`${t}_cb`, cb);
                 if(cb) {
                     localStorage.setItem(`${t}_city`, document.getElementById(`${t}-city`).value);
                     localStorage.setItem(`${t}_dist`, document.getElementById(`${t}-dist`).value);
                     localStorage.setItem(`${t}_detail`, document.getElementById(`${t}-detail`).value);
+                } else {
+                    localStorage.removeItem(`${t}_city`); localStorage.removeItem(`${t}_dist`); localStorage.removeItem(`${t}_detail`);
                 }
             });
 
             let finalMsg = `【 沐森商務｜預約需求 】\n👤 姓名：${userName}\n\n`;
-            let payloads = []; // 用於發送給 Google Sheets 的資料陣列
+            let payloads = [];
 
             if (depD) {
                 let addr = document.getElementById('dep-city').value + document.getElementById('dep-dist').value + document.getElementById('dep-detail').value;
@@ -265,11 +302,7 @@
                 payloads.push({ timestamp: new Date().toLocaleString(), type: "接機", userName: userName, phone: document.getElementById('arr-phone').value, flight: document.getElementById('arr-flight').value, date: arrD, time: document.getElementById('arr-time').value, start: document.getElementById('arr-start').value, end: addr + ex, pax: p, luggage: lug, seat: seat, memo: document.getElementById('arr-memo').value });
             }
 
-            // --- 發送資料到 Google Sheets ---
-            payloads.forEach(data => {
-                fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
-            });
-
+            payloads.forEach(data => { fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); });
             if (liff.isInClient()) { await liff.sendMessages([{ type: 'text', text: finalMsg }]); liff.closeWindow(); } else { alert(finalMsg); }
         }
     </script>
