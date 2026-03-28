@@ -1,73 +1,3 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>沐森禮賓｜用餐會議確認書</title>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        body { background: #1a1a1a; color: #d4af37; font-family: 'PingFang TC', sans-serif; margin: 0; padding: 15px; line-height: 1.6; }
-        .container { max-width: 500px; margin: auto; background: #222; padding: 25px; border-radius: 15px; border: 1px solid #d4af37; box-shadow: 0 10px 40px rgba(0,0,0,.8); box-sizing: border-box; }
-        h2 { text-align: center; color: #fff; margin-bottom: 15px; border-bottom: 2px solid #d4af37; padding-bottom: 10px; font-size: 20px; }
-        .userName { text-align: center; color: #fff; font-size: 16px; margin-bottom: 20px; font-weight: bold; }
-        .content { color: #ccc; margin-bottom: 20px; background: #2d2d2d; padding: 18px; border-radius: 10px; border-left: 5px solid #d4af37; font-size: 14px; }
-        .info-row { margin-bottom: 8px; display: flex; }
-        .label { font-weight: bold; color: #d4af37; width: 80px; flex-shrink: 0; }
-        .rules { margin-top: 15px; padding-top: 10px; border-top: 1px solid #444; color: #eee; }
-        .rules p { margin: 5px 0; display: flex; align-items: flex-start; }
-        .rules p span { margin-right: 8px; }
-        .checkbox-label { display: flex; align-items: center; margin-top: 20px; padding: 15px; background: #333; border-radius: 8px; cursor: pointer; border: 1px solid #d4af37; box-sizing: border-box; }
-        .checkbox-label input[type=checkbox] { width: 25px; height: 25px; margin-right: 15px; accent-color: #d4af37; -webkit-appearance: checkbox; cursor: pointer; flex-shrink: 0; }
-        .submit-btn { background: linear-gradient(to bottom, #d4af37, #b8860b); color: #1a1a1a; border: none; padding: 18px; border-radius: 50px; font-size: 18px; font-weight: bold; width: 100%; margin-top: 20px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>用餐會議確認書</h2>
-        <div id="userNameDisplay" class="userName">尊貴的賓客 您好</div>
-        
-        <div class="content">
-            <div class="info-row"><span class="label">日期：</span><span>2026年3月29日 (明日)</span></div>
-            <div class="info-row"><span class="label">時間：</span><span>11:00 (已訂位)</span></div>
-            <div class="info-row"><span class="label">地點：</span><span>金豬食堂</span></div>
-            
-            <div class="rules">
-                <strong style="color:#d4af37; display:block; margin-bottom:10px;">【 溫馨提醒與規範 】</strong>
-                <p><span>🐽</span> 用餐時間 120 分鐘。</p>
-                <p><span>🐽</span> 小孩計費：超過 120 公分算一位。</p>
-                <p><span>💰</span> 費用：只限點 VIP 套餐，一位 2000 元 (內含豬牛，不吃牛可改全豬)。</p>
-                <p><span>🐽</span> 自帶酒水開瓶費：每瓶 $1000。</p>
-                <p><span>🐽</span> 人數調整：請於 3 天前通知金豬食堂，若未告知將依原訂人數收費。</p>
-                <p><span>🐽</span> 出席規範：若完成訂位後未到店 (No Show)，仍須依原訂人數或包廂低消支付餐費，敬請理解。</p>
-            </div>
-        </div>
-
-        <label class="checkbox-label">
-            <input type="checkbox" id="agreeCheck">
-            <span style="color:#d4af37; font-weight:bold;">本人已詳閱並同意以上用餐規範</span>
-        </label>
-
-        <button class="submit-btn" id="submitBtn" onclick="sendReply()">確認出席並送出</button>
-    </div>
-
-    <script>
-        const MY_LIFF_ID = "2009625436-ejftzgdQ"; 
-
-        async function main() {
-            try {
-                await liff.init({ liffId: MY_LIFF_ID });
-                if (liff.isLoggedIn()) {
-                    const profile = await liff.getProfile();
-                    document.getElementById('userNameDisplay').innerText = `尊貴的 ${profile.displayName} 您好`;
-                } else {
-                    liff.login();
-                }
-            } catch (err) {
-                console.error('LIFF 初始化失敗', err);
-            }
-        }
-        main();
-
         async function sendReply() {
             const isChecked = document.getElementById('agreeCheck').checked;
             if (!isChecked) {
@@ -78,8 +8,47 @@
             try {
                 if (liff.isInClient()) {
                     await liff.sendMessages([{
-                        type: 'text',
-                        text: '本人已確認 3/29 用餐規則並同意出席'
+                        "type": "flex",
+                        "altText": "本人已確認 3/29 用餐規則並同意出席",
+                        "contents": {
+                          "type": "bubble",
+                          "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                              { "type": "text", "text": "沐森禮賓｜用餐確認", "weight": "bold", "color": "#d4af37", "size": "sm" },
+                              { "type": "text", "text": "本人已確認並同意出席", "weight": "bold", "size": "xl", "margin": "md", "color": "#ffffff" },
+                              { "type": "separator", "margin": "xxl", "color": "#444444" },
+                              {
+                                "type": "box", "layout": "vertical", "margin": "xxl", "spacing": "sm",
+                                "contents": [
+                                  {
+                                    "type": "box", "layout": "baseline", "spacing": "sm",
+                                    "contents": [
+                                      { "type": "text", "text": "日期", "color": "#aaaaaa", "size": "sm", "flex": 1 },
+                                      { "type": "text", "text": "2026/03/29 (明日)", "wrap": true, "color": "#eeeeee", "size": "sm", "flex": 4 }
+                                    ]
+                                  },
+                                  {
+                                    "type": "box", "layout": "baseline", "spacing": "sm",
+                                    "contents": [
+                                      { "type": "text", "text": "時間", "color": "#aaaaaa", "size": "sm", "flex": 1 },
+                                      { "type": "text", "text": "11:00 (金豬食堂)", "wrap": true, "color": "#eeeeee", "size": "sm", "flex": 4 }
+                                    ]
+                                  },
+                                  {
+                                    "type": "box", "layout": "baseline", "spacing": "sm",
+                                    "contents": [
+                                      { "type": "text", "text": "規範", "color": "#aaaaaa", "size": "sm", "flex": 1 },
+                                      { "type": "text", "text": "已詳閱 VIP 套餐規範並同意", "wrap": true, "color": "#d4af37", "size": "sm", "flex": 4 }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          "styles": { "body": { "backgroundColor": "#1a1a1a" } }
+                        }
                     }]);
                     liff.closeWindow(); 
                 } else {
@@ -90,6 +59,3 @@
                 console.error(error);
             }
         }
-    </script>
-</body>
-</html>
