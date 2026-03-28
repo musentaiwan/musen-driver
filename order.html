@@ -37,7 +37,6 @@
             <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機填寫</div>
         </div>
 
-        <!-- 送機 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" placeholder="僅限數字" oninput="this.value=this.value.replace(/[^0-9]/g,'');syncPhone(this.value)"></div>
@@ -57,7 +56,6 @@
             <div class="form-group"><label>備註</label><textarea id="dep-memo"></textarea></div>
         </div>
 
-        <!-- 接機 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" placeholder="僅限數字" oninput="this.value=this.value.replace(/[^0-9]/g,'');syncPhone(this.value)"></div>
@@ -68,7 +66,7 @@
             <div class="form-group"><label>接機終點</label>
                 <div class="address-row"><select id="arr-city" onchange="updateDistricts('arr')"></select><select id="arr-dist"></select></div>
                 <input type="text" id="arr-detail" placeholder="門牌地址">
-                <label class="checkbox-label"><input type="checkbox" id="save-arr"><span>下次繼續使用地址與電話</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="save-arr"><span class="checkbox-text">下次繼續使用地址與電話</span></label>
             </div>
             <div class="section-title">乘車人數 (上限 8 位)</div>
             <div class="grid-2"><select id="arr-adult" onchange="checkPaxLimit('arr')"></select><select id="arr-child" onchange="checkPaxLimit('arr')"></select></div>
@@ -81,7 +79,7 @@
             <div class="policy-content">1. 用車 48 小時前：全額退費。<br>2. 用車 24-48 小時內：扣 50% 車資。<br>3. 用車 24 小時內或當日：不予退費。<br>4. 航班取消或天災，請提證明協助改派。<br>5. 司機抵達等候 30 分鐘失聯，不予退費。</div>
             <label class="checkbox-label" style="border:1px solid #d4af37; margin-top:15px"><input type="checkbox" id="agree-policy"><span style="font-weight:bold; color:#d4af37">我已閱讀並同意以上公約</span></label>
         </div>
-        <button class="submit-btn" onclick="submitAll()">確認預約並送出</button>
+        <button class="submit-btn" id="finalSubmit" onclick="submitAll()">確認預約並送出</button>
     </div>
 
     <script>
@@ -122,20 +120,16 @@
             const opt = (type==='Lug') 
                 ? '<option value="">選擇行李</option><option value="手提行李">手提行李</option><option value="20吋登機箱">20吋登機箱</option><option value="24-26吋行李箱">24-26吋行李箱</option><option value="28-30吋行李箱">28-30吋行李箱</option><option value="胖胖箱">胖胖箱</option>'
                 : '<option value="">選擇座椅</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option>';
-            
-            // 修改座椅數量為 0-4，行李維持 1-8
             const maxQty = (type==='Seat') ? 4 : 8;
             let qtyOpt = ''; for(let i=0; i<=maxQty; i++) qtyOpt += `<option value="${i}">${i}個</option>`;
-
-            d.innerHTML=`<select class="sel-main" onchange="const qs=this.parentElement.querySelector('.sel-qty');qs.style.display=(this.value!=='')?'block':'none';checkDynamicLimit('${t}','${type}')">${opt}</select><select class="sel-qty" onchange="checkDynamicLimit('${t}','${type}')">${qtyOpt}</select><button type="button" class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
+            d.innerHTML=`<select class="sel-main" onchange="const qs=this.parentElement.querySelector('.sel-qty');qs.style.display=(this.value!=='')?'block':'none';checkDynamicLimit('${t}','${type}',this)">${opt}</select><select class="sel-qty" onchange="checkDynamicLimit('${t}','${type}',this)">${qtyOpt}</select><button type="button" class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
             g.appendChild(d);
         }
 
-        function checkDynamicLimit(t, type) {
+        function checkDynamicLimit(t, type, element) {
             let total = 0;
             const group = document.getElementById(t+type+'Group');
-            const items = group.querySelectorAll('.grid-item');
-            items.forEach(i => {
+            group.querySelectorAll('.grid-item').forEach(i => {
                 const mainVal = i.querySelector('.sel-main').value;
                 const qtyVal = parseInt(i.querySelector('.sel-qty').value) || 0;
                 if(mainVal) {
@@ -146,15 +140,8 @@
                     }
                 }
             });
-            if(type==='Seat' && total > 4) { 
-                alert("⚠️ 座椅總數不可超過 4 個"); 
-                // 將剛修改的那個下拉選單重置為 0
-                event.target.value = "0";
-            }
-            if(type==='Lug' && total > 14.5) { 
-                alert("⚠️ 行李總量已超過車輛負荷"); 
-                event.target.value = "0";
-            }
+            if(type==='Seat' && total > 4) { alert("⚠️ 座椅總數不可超過 4 個"); element.value = "0"; }
+            if(type==='Lug' && total > 14.5) { alert("⚠️ 行李總量已超過車輛負荷"); element.value = "0"; }
         }
 
         function addExtra(t){
@@ -181,25 +168,26 @@
         }
 
         async function submitAll(){
-            try {
-                if(!document.getElementById('agree-policy').checked)return alert("請閱讀並同意退款公約。");
-                const dD=document.getElementById('dep-date').value,aD=document.getElementById('arr-date').value;if(!dD&&!aD)return alert("請選擇日期。");
-                
-                ['dep','arr'].forEach(t=>{const cb=document.getElementById(`save-${t}`).checked;localStorage.setItem(`${t}_cb`,cb);if(cb){localStorage.setItem('musen_phone',document.getElementById('dep-phone').value);localStorage.setItem(`${t}_city`,document.getElementById(`${t}-city`).value);localStorage.setItem(`${t}_dist`,document.getElementById(`${t}-dist`).value);localStorage.setItem(`${t}_detail`,document.getElementById(`${t}-detail`).value)}});
-                let payloads=[];
-                if(dD){
-                    let addr=document.getElementById('dep-city').value+document.getElementById('dep-dist').value+document.getElementById('dep-detail').value,ex="";document.querySelectorAll('.dep-extra').forEach(el=>{if(el.value)ex+=` 加點:${el.value}`});
-                    payloads.push({type:"送機",userName:userName,phone:document.getElementById('dep-phone').value,flight:document.getElementById('dep-flight').value,date:dD,booking_time:document.getElementById('dep-time').value,start:addr+ex,end:document.getElementById('dep-end').value,pax:`${document.getElementById('dep-adult').value}大${document.getElementById('dep-child').value}小`,luggage:getGridData('dep','Lug'),seat:getGridData('dep','Seat'),memo:document.getElementById('dep-memo').value});
-                }
-                if(aD){
-                    let addr=document.getElementById('arr-city').value+document.getElementById('arr-dist').value+document.getElementById('arr-detail').value,ex="";document.querySelectorAll('.arr-extra').forEach(el=>{if(el.value)ex+=` 加點:${el.value}`});
-                    payloads.push({type:"接機",userName:userName,phone:document.getElementById('arr-phone').value,flight:document.getElementById('arr-flight').value,date:aD,booking_time:document.getElementById('arr-time').value,start:document.getElementById('arr-start').value,end:addr+ex,pax:`${document.getElementById('arr-adult').value}大${document.getElementById('arr-child').value}小`,luggage:getGridData('arr','Lug'),seat:getGridData('arr','Seat'),memo:document.getElementById('arr-memo').value});
-                }
-                payloads.forEach(d=>{fetch(gasUrl,{method:"POST",mode:"no-cors",body:JSON.stringify(d)})});
-                let finalMsg=`【 沐森禮賓｜預約需求 】\n👤 姓名：${userName}\n\n`;
-                payloads.forEach(p=>{finalMsg+=`${p.type==='送機'?'🛫':'🛬'} ${p.type}\n📅 日期：${p.date}\n⏰ 時間：${p.booking_time}\n📞 電話：${p.phone}\n✈️ 班機：${p.flight}\n📍 起點：${p.start}\n🏁 終點：${p.end}\n👥 人數：${p.pax}\n🧳 行李：${p.luggage}\n👶 座椅：${p.seat}\n📝 備註：${p.memo||'無'}\n\n`});
-                if(liff.isInClient()){await liff.sendMessages([{type:'text',text:finalMsg}]);liff.closeWindow()}else{alert(finalMsg)}
-            } catch(e) { console.log(e); }
+            if(!document.getElementById('agree-policy').checked)return alert("請勾選同意公約");
+            const dD=document.getElementById('dep-date').value,aD=document.getElementById('arr-date').value;if(!dD&&!aD)return alert("請填寫預約日期");
+            
+            ['dep','arr'].forEach(t=>{const cb=document.getElementById(`save-${t}`).checked;localStorage.setItem(`${t}_cb`,cb);if(cb){localStorage.setItem('musen_phone',document.getElementById('dep-phone').value);localStorage.setItem(`${t}_city`,document.getElementById(`${t}-city`).value);localStorage.setItem(`${t}_dist`,document.getElementById(`${t}-dist`).value);localStorage.setItem(`${t}_detail`,document.getElementById(`${t}-detail`).value)}});
+            
+            let payloads=[];
+            if(dD){
+                let addr=document.getElementById('dep-city').value+document.getElementById('dep-dist').value+document.getElementById('dep-detail').value,ex="";document.querySelectorAll('.dep-extra').forEach(el=>{if(el.value)ex+=` 加點:${el.value}`});
+                payloads.push({type:"送機",userName:userName,phone:document.getElementById('dep-phone').value,flight:document.getElementById('dep-flight').value,date:dD,booking_time:document.getElementById('dep-time').value,start:addr+ex,end:document.getElementById('dep-end').value,pax:`${document.getElementById('dep-adult').value}大${document.getElementById('dep-child').value}小`,luggage:getGridData('dep','Lug'),seat:getGridData('dep','Seat'),memo:document.getElementById('dep-memo').value});
+            }
+            if(aD){
+                let addr=document.getElementById('arr-city').value+document.getElementById('arr-dist').value+document.getElementById('arr-detail').value,ex="";document.querySelectorAll('.arr-extra').forEach(el=>{if(el.value)ex+=` 加點:${el.value}`});
+                payloads.push({type:"接機",userName:userName,phone:document.getElementById('arr-phone').value,flight:document.getElementById('arr-flight').value,date:aD,booking_time:document.getElementById('arr-time').value,start:document.getElementById('arr-start').value,end:addr+ex,pax:`${document.getElementById('arr-adult').value}大${document.getElementById('arr-child').value}小`,luggage:getGridData('arr','Lug'),seat:getGridData('arr','Seat'),memo:document.getElementById('arr-memo').value});
+            }
+            
+            payloads.forEach(d=>{fetch(gasUrl,{method:"POST",mode:"no-cors",body:JSON.stringify(d)})});
+            let finalMsg=`【 沐森禮賓｜預約需求 】\n👤 姓名：${userName}\n\n`;
+            payloads.forEach(p=>{finalMsg+=`${p.type==='送機'?'🛫':'🛬'} ${p.type}\n📅 日期：${p.date}\n⏰ 時間：${p.booking_time}\n📞 電話：${p.phone}\n✈️ 班機：${p.flight}\n📍 起點：${p.start}\n🏁 終點：${p.end}\n👥 人數：${p.pax}\n🧳 行李：${p.luggage}\n👶 座椅：${p.seat}\n📝 備註：${p.memo||'無'}\n\n`});
+            
+            if(liff.isInClient()){await liff.sendMessages([{type:'text',text:finalMsg}]);liff.closeWindow()}else{alert(finalMsg)}
         }
     </script>
 </body>
