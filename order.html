@@ -229,13 +229,14 @@
                 const max = sel.id.includes('fat') ? 5 : 8;
                 for(let i=0; i<=max; i++) sel.add(new Option(`${i}件`, i));
             });
-        }
+       }
 
         function addSeat(type) {
             const group = document.getElementById(type + 'SeatGroup');
-            if(group.children.length >= 4) return alert("⚠️ 座椅欄位已達上限");
+            // 鎖死 4 欄防呆
+            if(group.children.length >= 4) return alert("⚠️ 座椅欄位已達上限\n單次預約最多僅能新增 4 組需求。");
             const div = document.createElement('div'); div.className = "seat-item";
-            div.innerHTML = `<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty'); qs.style.display=(this.value!=='')?'block':'none';"><option value="">座椅種類</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option></select><select class="seat-qty"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select>`;
+            div.innerHTML = `<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty'); qs.style.display=(this.value!=='')?'block':'none';"><option value="">種類</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option></select><select class="seat-qty"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select>`;
             group.appendChild(div);
         }
 
