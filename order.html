@@ -14,10 +14,11 @@
         label{display:block;margin-bottom:8px;font-size:14px;color:#aaa}
         input,select,textarea{width:100%;height:48px;padding:12px;border-radius:8px;border:1px solid #444;background:#333;color:#fff;box-sizing:border-box;font-size:16px;outline:none;-webkit-appearance:none}
         .address-row{display:flex;gap:8px;margin-bottom:8px}.address-row select{flex:1}
-        .checkbox-container{display:flex;align-items:center;margin-top:10px;padding:12px;background:#2a2a2a;border-radius:8px;cursor:pointer;border:1px solid #444}
-        input[type=checkbox]{width:22px;height:22px;margin-right:12px;accent-color:#d4af37;-webkit-appearance:checkbox}
+        /* 勾選框優化：擴大點擊區域 */
+        .checkbox-label {display:flex;align-items:center;margin-top:10px;padding:15px;background:#2a2a2a;border-radius:8px;cursor:pointer;border:1px solid #444;width:100%;box-sizing:border-box}
+        .checkbox-label input[type=checkbox]{width:25px;height:25px;margin-right:15px;accent-color:#d4af37;flex-shrink:0;cursor:pointer;-webkit-appearance:checkbox}
+        .checkbox-text {color:#d4af37;font-size:15px;user-select:none}
         .section-title{font-size:14px;color:#d4af37;margin:15px 0 10px 0;border-left:3px solid #d4af37;padding-left:8px}
-        /* 介面優化：行列配置 */
         .seat-item,.extra-item{display:flex;gap:8px;margin-bottom:10px}
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
         .seat-type{flex:2;background:#444!important;border:1px solid #d4af37!important}.seat-qty{flex:1;display:none;background:#555!important;border:1px solid #d4af37!important}
@@ -37,7 +38,6 @@
             <div id="tabArr" class="tab" onclick="switchTab('arrival')">接機填寫</div>
         </div>
 
-        <!-- 送機內容 -->
         <div id="depSection" class="form-section active">
             <div class="form-group"><label>送機日期</label><input type="date" id="dep-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="dep-phone" oninput="syncPhone(this.value)"></div>
@@ -46,33 +46,21 @@
             <div class="form-group"><label>上車起點</label>
                 <div class="address-row"><select id="dep-city" onchange="updateDistricts('dep')"></select><select id="dep-dist"></select></div>
                 <input type="text" id="dep-detail" placeholder="門牌地址">
-                <div class="checkbox-container" onclick="toggleCB('save-dep')"><input type="checkbox" id="save-dep"><span>下次繼續使用地址與電話</span></div>
+                <label class="checkbox-label"><input type="checkbox" id="save-dep"><span class="checkbox-text">下次繼續使用地址與電話</span></label>
             </div>
             <div id="depExtraGroup"></div><button class="add-btn" onclick="addExtra('dep')">＋ 增加送機加點</button>
             <div class="form-group"><label>送機終點</label><input type="text" id="dep-end" placeholder="機場航廈"></div>
-            
-            <div class="section-title">乘車人數 (上限 8 位)</div>
+            <div class="section-title">人數與行李 (上限8人/點數14.5)</div>
+            <div class="grid-2"><select id="dep-adult" onchange="checkPaxLimit('dep')"></select><select id="dep-child" onchange="checkPaxLimit('dep')"></select></div>
             <div class="grid-2">
-                <select id="dep-adult" onchange="checkPaxLimit('dep')"></select>
-                <select id="dep-child" onchange="checkPaxLimit('dep')"></select>
-            </div>
-
-            <div class="section-title">行李規格 (點數上限 14.5)</div>
-            <div class="grid-2">
-                <select class="lug-sel" id="dep-lug-hand" onchange="checkAllLuggage('dep')"></select>
-                <select class="lug-sel" id="dep-lug-20" onchange="checkAllLuggage('dep')"></select>
-                <select class="lug-sel" id="dep-lug-24" onchange="checkAllLuggage('dep')"></select>
-                <select class="lug-sel" id="dep-lug-28" onchange="checkAllLuggage('dep')"></select>
+                <select class="lug-sel" id="dep-lug-hand" onchange="checkAllLuggage('dep')"></select><select class="lug-sel" id="dep-lug-20" onchange="checkAllLuggage('dep')"></select>
+                <select class="lug-sel" id="dep-lug-24" onchange="checkAllLuggage('dep')"></select><select class="lug-sel" id="dep-lug-28" onchange="checkAllLuggage('dep')"></select>
             </div>
             <select class="lug-sel" id="dep-lug-fat" onchange="checkAllLuggage('dep')"></select>
-
-            <div class="section-title">兒童座椅需求 (合計不超過 4 組)</div>
-            <div id="depSeatGroup"></div>
-            <button class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
+            <div class="section-title">兒童座椅需求 (合計不超過 4 組)</div><div id="depSeatGroup"></div><button class="add-btn" onclick="addSeat('dep')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="dep-memo"></textarea></div>
         </div>
 
-        <!-- 接機內容 -->
         <div id="arrSection" class="form-section">
             <div class="form-group"><label>接機日期</label><input type="date" id="arr-date"></div>
             <div class="form-group"><label>聯絡電話</label><input type="tel" id="arr-phone" oninput="syncPhone(this.value)"></div>
@@ -83,30 +71,23 @@
             <div class="form-group"><label>接機終點</label>
                 <div class="address-row"><select id="arr-city" onchange="updateDistricts('arr')"></select><select id="arr-dist"></select></div>
                 <input type="text" id="arr-detail" placeholder="門牌地址">
-                <div class="checkbox-container" onclick="toggleCB('save-arr')"><input type="checkbox" id="save-arr"><span>下次繼續使用地址與電話</span></div>
+                <label class="checkbox-label"><input type="checkbox" id="save-arr"><span class="checkbox-text">下次繼續使用地址與電話</span></label>
             </div>
             <div class="section-title">乘車人數 (上限 8 位)</div>
-            <div class="grid-2">
-                <select id="arr-adult" onchange="checkPaxLimit('arr')"></select>
-                <select id="arr-child" onchange="checkPaxLimit('arr')"></select>
-            </div>
+            <div class="grid-2"><select id="arr-adult" onchange="checkPaxLimit('arr')"></select><select id="arr-child" onchange="checkPaxLimit('arr')"></select></div>
             <div class="section-title">行李規格 (點數上限 14.5)</div>
             <div class="grid-2">
-                <select class="lug-sel" id="arr-lug-hand" onchange="checkAllLuggage('arr')"></select>
-                <select class="lug-sel" id="arr-lug-20" onchange="checkAllLuggage('arr')"></select>
-                <select class="lug-sel" id="arr-lug-24" onchange="checkAllLuggage('arr')"></select>
-                <select class="lug-sel" id="arr-lug-28" onchange="checkAllLuggage('arr')"></select>
+                <select class="lug-sel" id="arr-lug-hand" onchange="checkAllLuggage('arr')"></select><select class="lug-sel" id="arr-lug-20" onchange="checkAllLuggage('arr')"></select>
+                <select class="lug-sel" id="arr-lug-24" onchange="checkAllLuggage('arr')"></select><select class="lug-sel" id="arr-lug-28" onchange="checkAllLuggage('arr')"></select>
             </div>
             <select class="lug-sel" id="arr-lug-fat" onchange="checkAllLuggage('arr')"></select>
-            <div class="section-title">兒童座椅需求 (合計不超過 4 組)</div>
-            <div id="arrSeatGroup"></div>
-            <button class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
+            <div class="section-title">兒童座椅需求 (合計不超過 4 組)</div><div id="arrSeatGroup"></div><button class="add-btn" onclick="addSeat('arr')">＋ 增加兒童座椅</button>
             <div class="form-group"><label>備註</label><textarea id="arr-memo"></textarea></div>
         </div>
 
         <div class="policy-box"><span class="policy-title">沐森禮賓 取消與退款公約</span>
             <div class="policy-content">1. 用車 48 小時前：全額退費。<br>2. 用車 24-48 小時內：扣 50% 車資。<br>3. 用車 24 小時內或當日：不予退費。<br>4. 航班取消或天災，請提證明協助改派。<br>5. 司機抵達等候 30 分鐘失聯，不予退費。</div>
-            <div class="checkbox-container" onclick="toggleCB('agree-policy')" style="border:1px solid #d4af37"><input type="checkbox" id="agree-policy"><span>我已閱讀並同意以上公約</span></div>
+            <label class="checkbox-label" style="border:1px solid #d4af37; margin-top:15px"><input type="checkbox" id="agree-policy"><span class="checkbox-text" style="font-weight:bold">我已閱讀並同意以上公約</span></label>
         </div>
         <button class="submit-btn" onclick="submitAll()">確認預約並送出</button>
     </div>
@@ -150,11 +131,10 @@
         function addSeat(t){
             const g=document.getElementById(t+'SeatGroup');if(g.children.length>=4)return alert("⚠️ 欄位已達上限");
             const d=document.createElement('div');d.className="seat-item";
-            d.innerHTML=`<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty');qs.style.display=(this.value!=='')?'block':'none'"><option value="">種類</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option></select><select class="seat-qty"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select><button type="button" class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
+            d.innerHTML=`<select class="seat-type" onchange="const qs=this.parentElement.querySelector('.seat-qty');qs.style.display=(this.value!=='')?'block':'none'"><option value="">種類</option><option value="正向安全座椅">正向</option><option value="反向安全座椅">反向</option><option value="增高墊">增高墊</option></select><select class="seat-qty" onchange="checkSeats('${t}')"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option><option value="4">4個</option></select><button type="button" class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
             g.appendChild(d);
         }
 
-        // 兒童座椅總數防呆
         function checkSeats(t){
             let total=0;document.getElementById(t+'SeatGroup').querySelectorAll('.seat-item').forEach(i=>{
                 if(i.querySelector('.seat-type').value!=="") total+=parseInt(i.querySelector('.seat-qty').value)||0;
@@ -163,19 +143,16 @@
         }
 
         function checkPaxLimit(t){const a=parseInt(document.getElementById(`${t}-adult`).value)||0,c=parseInt(document.getElementById(`${t}-child`).value)||0;if(a+c>8){alert("⚠️ 人數上限 8 位");document.getElementById(`${t}-child`).value="0"}}
-        
         function checkAllLuggage(t){
             const f=parseInt(document.getElementById(`${t}-lug-fat`).value)||0,l28=parseInt(document.getElementById(`${t}-lug-28`).value)||0,l24=parseInt(document.getElementById(`${t}-lug-24`).value)||0,l20=parseInt(document.getElementById(`${t}-lug-20`).value)||0,h=parseInt(document.getElementById(`${t}-lug-hand`).value)||0;
             let s=(f*2.5)+(l28*1.5)+(l24*1.2)+(l20*.5)+(h*.3);
-            if(s>14.5){alert("⚠️ 行李超載警告\n行李點數已超過車輛上限。");document.getElementById(`${t}-lug-fat`).value="0";document.getElementById(`${t}-lug-28`).value="0"}}
+            if(s>14.5){alert("⚠️ 行李超載警告");document.getElementById(`${t}-lug-fat`).value="0";document.getElementById(`${t}-lug-28`).value="0"}}
 
         function initCityDropdowns(){const d=document.getElementById('dep-city'),a=document.getElementById('arr-city');Object.keys(twData).forEach(c=>{d.add(new Option(c,c));a.add(new Option(c,c))});updateDistricts('dep');updateDistricts('arr')}
         function initPaxDropdowns(){['dep-adult','dep-child','arr-adult','arr-child'].forEach(id=>{const s=document.getElementById(id);for(let i=(id.includes('adult')?1:0);i<=8;i++)s.add(new Option(id.includes('adult')?`大人 ${i}位`:`小孩 ${i}位`,i))})}
-        
         function initLugDropdowns(){
             document.querySelectorAll('.lug-sel').forEach(s=>{
-                const l=s.id.split('-').pop();
-                const m=(l==='fat'?5:8);
+                const l=s.id.split('-').pop();const m=(l==='fat'?5:8);
                 const names={'hand':'手提行李','20':'20吋登機箱','24':'24-26吋行李箱','28':'28-30吋行李箱','fat':'胖胖箱'};
                 for(let i=0;i<=m;i++)s.add(new Option(`${names[l]} ${i}件`,i))
             })}
@@ -183,22 +160,14 @@
         function updateDistricts(t){const c=document.getElementById(`${t}-city`).value,s=document.getElementById(`${t}-dist`);s.innerHTML="";twData[c].forEach(d=>{s.add(new Option(d,d))})}
         function syncPhone(v){document.getElementById('dep-phone').value=v;document.getElementById('arr-phone').value=v}
         function loadStorage(){['dep','arr'].forEach(t=>{if(localStorage.getItem(`${t}_cb`)==='true'){document.getElementById(`save-${t}`).checked=!0;if(localStorage.getItem('musen_phone'))syncPhone(localStorage.getItem('musen_phone'));if(localStorage.getItem(`${t}_city`)){document.getElementById(`${t}-city`).value=localStorage.getItem(`${t}_city`);updateDistricts(t);document.getElementById(`${t}-dist`).value=localStorage.getItem(`${t}_dist`);document.getElementById(`${t}-detail`).value=localStorage.getItem(`${t}_detail`)}}})}
-        function toggleCB(id){document.getElementById(id).checked=!document.getElementById(id).checked}
         function switchTab(m){const isD=m==='departure';document.getElementById('tabDep').className=isD?'tab active':'tab';document.getElementById('tabArr').className=isD?'tab':'tab active';document.getElementById('depSection').className=isD?'form-section active':'form-section';document.getElementById('arrSection').className=isD?'form-section':'form-section active'}
-        
-        function getL(t){
-            const names={'手提':'-lug-hand','20吋':'-lug-20','24-26吋':'-lug-24','28-30吋':'-lug-28','胖箱':'-lug-fat'};
-            const r=[];for(let[l,id]of Object.entries(names)){let v=document.getElementById(t+id).value;if(v>0)r.push(`${l}x${v}`)}return r.length>0?r.join(', '):"無"}
+        function getL(t){const names={'手提':'-lug-hand','20吋':'-lug-20','24-26吋':'-lug-24','28-30吋':'-lug-28','胖箱':'-lug-fat'};const r=[];for(let[l,id]of Object.entries(names)){let v=document.getElementById(t+id).value;if(v>0)r.push(`${l}x${v}`)}return r.length>0?r.join(', '):"無"}
         function getS(t){let r=[];document.getElementById(t+'SeatGroup').querySelectorAll('.seat-item').forEach(i=>{const v=i.querySelector('.seat-type').value,q=i.querySelector('.seat-qty').value;if(v)r.push(`${v}x${q}`)});return r.length>0?r.join(', '):"無"}
 
         async function submitAll(){
             if(!document.getElementById('agree-policy').checked)return alert("請閱讀並勾選同意退款公約。");
             const dD=document.getElementById('dep-date').value,aD=document.getElementById('arr-date').value;if(!dD&&!aD)return alert("請至少選擇一個接送日期。");
-            
-            // 檢查座椅總數
-            if(dD&&!checkSeats('dep'))return;
-            if(aD&&!checkSeats('arr'))return;
-
+            if(dD&&!checkSeats('dep'))return;if(aD&&!checkSeats('arr'))return;
             ['dep','arr'].forEach(t=>{const cb=document.getElementById(`save-${t}`).checked;localStorage.setItem(`${t}_cb`,cb);if(cb){localStorage.setItem('musen_phone',document.getElementById('dep-phone').value);localStorage.setItem(`${t}_city`,document.getElementById(`${t}-city`).value);localStorage.setItem(`${t}_dist`,document.getElementById(`${t}-dist`).value);localStorage.setItem(`${t}_detail`,document.getElementById(`${t}-detail`).value)}});
             let payloads=[];
             if(dD){
