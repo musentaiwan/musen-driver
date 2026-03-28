@@ -51,7 +51,6 @@
     </div>
 
     <script>
-        // 已自動填入截圖中的 LIFF ID
         const MY_LIFF_ID = "2009625436-ejftzgdQ"; 
 
         async function main() {
@@ -64,7 +63,7 @@
                     liff.login();
                 }
             } catch (err) {
-                const MY_LIFF_ID = "2009625436-ejftzgdQ"; 
+                console.error('LIFF 初始化失敗', err);
             }
         }
         main();
@@ -84,7 +83,7 @@
                     }]);
                     liff.closeWindow(); 
                 } else {
-                    alert("感謝您的確認！(此環境無法自動發送 LINE 訊息)");
+                    alert("感謝您的確認！");
                 }
             } catch (error) {
                 alert("發送失敗，請確保在 LINE App 中開啟此連結。");
